@@ -41,7 +41,7 @@ export function ContentCard({
                 {description}
             </Text>
             <Text as="p" className="text-sm text-(--fgColor-muted)">
-                Published on {new Date(publishedAt).toLocaleDateString()}
+                Published: {new Date(publishedAt).toLocaleDateString()}
             </Text>
         </article>
     );
