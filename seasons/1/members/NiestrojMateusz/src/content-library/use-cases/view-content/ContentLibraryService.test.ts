@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { LibraryItem } from '../src/content-library/domain/ContentService';
-import { createContentLibraryViewModel } from '../src/content-library/use-cases/view-content/ContentLibraryService';
+import type { LibraryItem } from '../../domain/ContentService';
+import { createContentLibraryViewModel } from './ContentLibraryService';
 
 const item = (overrides: Partial<LibraryItem> = {}): LibraryItem => ({
     id: 'c_0142',

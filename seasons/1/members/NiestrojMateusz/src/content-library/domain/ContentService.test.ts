@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-    sortByNewest,
-    type LibraryItem,
-} from '../src/content-library/domain/ContentService';
+import { sortByNewest, type LibraryItem } from './ContentService';
 
 const item = (id: string, publishedAt: string): LibraryItem => ({
     id,
