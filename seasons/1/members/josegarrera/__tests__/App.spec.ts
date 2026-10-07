@@ -1,5 +1,7 @@
 import { expect, test } from '@withnik/configs/playwright';
 
+import contentSource from '../../../data/content.json' with { type: 'json' };
+
 test.describe('The Content Library page', () => {
     test('lists every content item newest first, each linking to its original', async ({
         mount,
@@ -18,7 +20,7 @@ test.describe('The Content Library page', () => {
         await expect(
             app.getByRole('heading', { name: 'Content Library' }),
         ).toBeVisible();
-        await expect(cards).toHaveCount(40);
+        await expect(cards).toHaveCount(contentSource.items.length);
         await expect(newestCard).toContainText('blueprint');
         await expect(newestCard).toContainText('Sep 25, 2026');
         await expect(newestCard).toContainText(
