@@ -7,5 +7,5 @@ export type Content = {
     url: string;
     publishedAt: string;
     excerpt: string;
-    thumbnailUrl: string;
+    thumbnailUrl: string | null;
 };
