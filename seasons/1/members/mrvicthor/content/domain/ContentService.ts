@@ -3,7 +3,7 @@ export type Content = {
     title: string;
     type: string;
     media: string;
-    durationSeconds: number;
+    durationSeconds: number | null;
     url: string;
     publishedAt: string;
     excerpt: string;
