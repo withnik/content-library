@@ -1,11 +1,15 @@
 import { Heading } from '@primer/react';
+import { ContentDashboard } from './ContentDashboard';
+import { contentItems } from './ContentDashboardService';
 
-// Primer builds the UI; Tailwind only spaces it out. Utilities cannot reach
-// inside a Primer component's own styles — that is deliberate.
 export function App() {
     return (
-        <main className="flex flex-col gap-4 p-6">
-            <Heading as="h1">Content Library</Heading>
+        <main className="flex flex-col gap-6 p-6" aria-labelledby="page-title">
+            <Heading as="h1" id="page-title">
+                Content Library
+            </Heading>
+
+            <ContentDashboard items={contentItems} />
         </main>
     );
 }
