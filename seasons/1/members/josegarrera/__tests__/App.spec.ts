@@ -1,14 +1,34 @@
-// Smoke test for the integration layer (Playwright, real Chromium). It
-// mounts the story next door — no Testing Library anywhere. Replace freely.
 import { expect, test } from '@withnik/configs/playwright';
 
-test('renders the page heading with Primer styles', async ({ mount }) => {
-    const app = await mount('App/Default');
+import contentSource from '../../../data/content.json' with { type: 'json' };
 
-    const heading = app.getByRole('heading', { name: 'Content Library' });
-    await expect(heading).toBeVisible();
-    // Proves the Primer theme is live: the fg token resolves to a real colour.
-    await expect(heading).toHaveCSS('color', 'rgb(31, 35, 40)');
-    // ...and that Tailwind's layout utilities are applied too.
-    await expect(app.locator('main')).toHaveCSS('gap', '16px');
+test.describe('The Content Library page', () => {
+    test('lists every content item newest first, each linking to its original', async ({
+        mount,
+    }) => {
+        const app = await mount('App/Default');
+
+        const cards = app.getByRole('listitem');
+        const newestCard = cards.first();
+        const newestTitle = newestCard.getByRole('link', {
+            name: 'Building real apps together',
+        });
+        const newestOpenButton = newestCard.getByRole('link', { name: 'Open' });
+        const newestUrl =
+            'https://better.withnik.com/c/general-discussions/building-real-apps-together';
+
+        await expect(
+            app.getByRole('heading', { name: 'Content Library' }),
+        ).toBeVisible();
+        await expect(cards).toHaveCount(contentSource.items.length);
+        await expect(newestCard).toContainText('blueprint');
+        await expect(newestCard).toContainText('Sep 25, 2026');
+        await expect(newestCard).toContainText(
+            "Nik introduces the community's initiative to build real applications collaboratively",
+        );
+        await expect(newestTitle).toHaveAttribute('href', newestUrl);
+        await expect(newestTitle).toHaveAttribute('target', '_blank');
+        await expect(newestOpenButton).toHaveAttribute('href', newestUrl);
+        await expect(newestOpenButton).toHaveAttribute('target', '_blank');
+    });
 });
