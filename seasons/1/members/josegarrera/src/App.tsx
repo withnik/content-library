@@ -1,7 +1,7 @@
 import { PageHeader } from '@primer/react';
 
 import { ContentLibrary } from './ContentLibrary';
-import type { ContentItem } from './contentItem';
+import { type ContentItem, sortNewestFirst } from './contentItem';
 
 type AppProps = {
     items: ContentItem[];
@@ -15,7 +15,7 @@ export function App({ items }: AppProps) {
                     <PageHeader.Title as="h1">Content Library</PageHeader.Title>
                 </PageHeader.TitleArea>
             </PageHeader>
-            <ContentLibrary items={items} />
+            <ContentLibrary items={sortNewestFirst(items)} />
         </main>
     );
 }

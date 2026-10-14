@@ -37,4 +37,17 @@ test.describe('The Content Library page', () => {
         );
         await expect(firstCard).toContainText('Dec 5, 2025');
     });
+
+    test('lists the latest published item first', async ({ mount }) => {
+        const app = await mount('App/Default', {
+            props: { items: [repositoryLesson, bootstrappingBlueprint] },
+        });
+
+        const titles = app.getByRole('listitem').getByRole('heading');
+
+        await expect(titles).toHaveText([
+            'Bootstrapping an app',
+            'The need of Repository Layer',
+        ]);
+    });
 });
