@@ -1,18 +1,20 @@
 import contentSource from '../../../data/content.json';
 
-import { type ContentItem, sortNewestFirst } from './contentItem';
+import type { ContentItem } from './contentItem';
+
+type ContentRecord = (typeof contentSource.items)[number];
 
 export function loadContentItems(): ContentItem[] {
-    const items = contentSource.items.map(
-        ({ id, title, type, excerpt, url, publishedAt }) => ({
-            id,
-            title,
-            type,
-            excerpt,
-            url,
-            publishedAt,
-        }),
-    );
+    return toContentItems(contentSource.items);
+}
 
-    return sortNewestFirst(items);
+export function toContentItems(records: ContentRecord[]): ContentItem[] {
+    return records.map(({ id, title, type, excerpt, url, publishedAt }) => ({
+        id,
+        title,
+        type,
+        excerpt,
+        url,
+        publishedAt,
+    }));
 }

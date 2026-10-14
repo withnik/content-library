@@ -1,25 +1,34 @@
 import { describe, expect, it } from 'vitest';
 
-import { loadContentItems } from '../src/contentLibraryData';
+import { toContentItems } from '../src/contentLibraryData';
 
 describe('The data source', () => {
-    it('provides every content item', () => {
-        const items = loadContentItems();
+    it('keeps only the fields the page uses from each record', () => {
+        const record = {
+            id: 'c_0001',
+            title: 'The need of Repository Layer',
+            type: 'lesson',
+            url: 'https://better.withnik.com/c/react-nextjs-discussions/repository-layer',
+            publishedAt: '2025-12-04',
+            author: 'Stefano',
+            space: 'React / Nextjs',
+            excerpt: 'Why a repository layer keeps data access out of the UI.',
+            durationSeconds: null,
+            thumbnailUrl: null,
+        };
 
-        expect(items).toHaveLength(40);
-    });
+        const items = toContentItems([record]);
 
-    it('provides the content items newest first', () => {
-        const [newest] = loadContentItems();
-
-        expect(newest).toEqual({
-            id: 'c_0040',
-            title: 'Building real apps together',
-            type: 'blueprint',
-            excerpt:
-                "Nik introduces the community's initiative to build real applications collaboratively — a shift toward applied, hands-on learning with actual production constraints.",
-            url: 'https://better.withnik.com/c/general-discussions/building-real-apps-together',
-            publishedAt: '2026-09-25',
-        });
+        expect(items).toEqual([
+            {
+                id: 'c_0001',
+                title: 'The need of Repository Layer',
+                type: 'lesson',
+                excerpt:
+                    'Why a repository layer keeps data access out of the UI.',
+                url: 'https://better.withnik.com/c/react-nextjs-discussions/repository-layer',
+                publishedAt: '2025-12-04',
+            },
+        ]);
     });
 });
