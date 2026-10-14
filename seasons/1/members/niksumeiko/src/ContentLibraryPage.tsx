@@ -1,11 +1,14 @@
 import { Button, Heading, Link, PageHeader, Stack, Text } from '@primer/react';
+import { createContentLibraryViewModel } from './contentLibraryViewModel';
 
 // Raw content record shape — matches a single entry in data/content.json.
+// `media` is optional because the real data file omits it; test fixtures may
+// still carry it for future iterations.
 export type ContentItem = {
     id: string;
     title: string;
     type: string;
-    media: string;
+    media?: string;
     durationSeconds: number | null;
     url: string;
     publishedAt: string;
@@ -17,60 +20,54 @@ export type ContentLibraryPageProps = {
     items: ContentItem[];
 };
 
-// Static composition only — no loop over `items` yet, no sorting, no
-// formatting. This proves out the Primer-only UI for a single item; the
-// list, ordering and app wiring land in a later iteration. Primer v38 has
-// no generic Box/Card component, so the item's frame is a plain element
-// spaced out with Tailwind, matching the convention set in App.tsx.
 export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
-    // Non-null: this iteration always renders the first item; an empty
-    // `items` array isn't a case this component handles yet.
-    const item = items[0]!;
+    const viewModel = createContentLibraryViewModel(items);
 
     return (
         <main className="flex flex-col gap-4 p-6">
             <PageHeader>
                 <PageHeader.TitleArea>
-                    <PageHeader.Title>Content Library</PageHeader.Title>
+                    <PageHeader.Title>{viewModel.title}</PageHeader.Title>
                 </PageHeader.TitleArea>
             </PageHeader>
 
-            {/* TODO: loop over `items`, sorted newest first, once the
-                list iteration lands. */}
-            <div
-                data-testid={`content-item-${item.id}`}
-                className="rounded-md border border-gray-300 p-4"
-            >
-                <Stack direction="vertical" gap="condensed">
-                    <Stack
-                        direction="horizontal"
-                        justify="space-between"
-                        align="start"
-                    >
-                        <Link
-                            href={item.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
+            {viewModel.items.map((item) => (
+                <div
+                    key={item.id}
+                    data-testid={`content-item-${item.id}`}
+                    className="rounded-md border border-gray-300 p-4"
+                >
+                    <Stack direction="vertical" gap="condensed">
+                        <Stack
+                            direction="horizontal"
+                            justify="space-between"
+                            align="start"
                         >
-                            <Heading as="h3" variant="small">
-                                {item.title}
-                            </Heading>
-                        </Link>
-                        <Button
-                            as="a"
-                            href={item.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Open
-                        </Button>
+                            <Link
+                                href={item.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Heading as="h3" variant="small">
+                                    {item.title}
+                                </Heading>
+                            </Link>
+                            <Button
+                                as="a"
+                                href={item.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Open
+                            </Button>
+                        </Stack>
+                        <Text as="p" size="small">
+                            {item.type} · {item.date}
+                        </Text>
+                        <Text as="p">{item.excerpt}</Text>
                     </Stack>
-                    <Text as="p" size="small">
-                        {item.type} · {item.publishedAt}
-                    </Text>
-                    <Text as="p">{item.excerpt}</Text>
-                </Stack>
-            </div>
+                </div>
+            ))}
         </main>
     );
 }

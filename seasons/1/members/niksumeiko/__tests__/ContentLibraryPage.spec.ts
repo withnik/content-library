@@ -95,7 +95,9 @@ test('renders the content library page title, every item, and one item linking t
     await expect(titleLink).toHaveAttribute('target', '_blank');
     await expect(titleLink).toHaveAttribute('rel', /noopener/);
 
-    const openLink = page.getByRole('link', { name: 'Open' });
+    const openLink = page
+        .getByTestId('content-item-c_0001')
+        .getByRole('link', { name: 'Open' });
     await expect(openLink).toHaveAttribute(
         'href',
         'https://better.withnik.com/c/react-nextjs-discussions/the-need-of-a-viewmodel',
