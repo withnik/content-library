@@ -1,11 +1,7 @@
-import { Heading } from '@primer/react';
+import content from '../../../data/content.json' with { type: 'json' };
+import { LibraryPage } from './LibraryPage';
 
-// Primer builds the UI; Tailwind only spaces it out. Utilities cannot reach
-// inside a Primer component's own styles — that is deliberate.
+// Composition root: decides where the page's inputs come from, nothing else.
 export function App() {
-    return (
-        <main className="flex flex-col gap-4 p-6">
-            <Heading as="h1">Content Library</Heading>
-        </main>
-    );
+    return <LibraryPage items={content.items} locale={navigator.language} />;
 }
