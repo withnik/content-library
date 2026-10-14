@@ -1,4 +1,4 @@
-import { formatPublishedAt } from './contentItem';
+import { formatPublishedAt, sortNewestFirst } from './contentItem';
 
 export type ContentRecord = {
     id: string;
@@ -19,12 +19,14 @@ export type ContentCard = {
 };
 
 export function presentContentLibrary(records: ContentRecord[]): ContentCard[] {
-    return records.map(({ id, title, type, excerpt, url, publishedAt }) => ({
-        id,
-        title,
-        type,
-        excerpt,
-        url,
-        publishedDate: formatPublishedAt(publishedAt),
-    }));
+    return sortNewestFirst(records).map(
+        ({ id, title, type, excerpt, url, publishedAt }) => ({
+            id,
+            title,
+            type,
+            excerpt,
+            url,
+            publishedDate: formatPublishedAt(publishedAt),
+        }),
+    );
 }
