@@ -65,24 +65,41 @@ test('renders the content library page title, every item, and one item linking t
         items.length,
     );
 
-    // Full detail check on a single item is enough to prove the shape is
-    // right; the count assertion above already covers "every item".
-    const item = items[0]!;
+    // Full detail check on a single item (the first fake record above) is
+    // enough to prove the shape is right; the count assertion above
+    // already covers "every item". Asserted by its own static text/url
+    // rather than through the `items` array, so the expectation reads as
+    // what the user actually sees.
     await expect(
-        page.getByRole('heading', { level: 3, name: item.title }),
+        page.getByRole('heading', {
+            level: 3,
+            name: 'The need of a ViewModel',
+        }),
     ).toBeVisible();
-    await expect(page.getByText(item.excerpt)).toBeVisible();
-    await expect(page.getByText(item.type, { exact: false })).toBeVisible();
+    await expect(
+        page.getByText(
+            'Explores why a ViewModel keeps presentation logic out of components in a clean React architecture.',
+        ),
+    ).toBeVisible();
+    await expect(page.getByText('lesson', { exact: false })).toBeVisible();
 
     // The title and the "Open" action both link back to the original,
     // opening it in a new tab rather than navigating away.
-    const titleLink = page.getByRole('link', { name: item.title });
-    await expect(titleLink).toHaveAttribute('href', item.url);
+    const titleLink = page.getByRole('link', {
+        name: 'The need of a ViewModel',
+    });
+    await expect(titleLink).toHaveAttribute(
+        'href',
+        'https://better.withnik.com/c/react-nextjs-discussions/the-need-of-a-viewmodel',
+    );
     await expect(titleLink).toHaveAttribute('target', '_blank');
     await expect(titleLink).toHaveAttribute('rel', /noopener/);
 
     const openLink = page.getByRole('link', { name: 'Open' });
-    await expect(openLink).toHaveAttribute('href', item.url);
+    await expect(openLink).toHaveAttribute(
+        'href',
+        'https://better.withnik.com/c/react-nextjs-discussions/the-need-of-a-viewmodel',
+    );
     await expect(openLink).toHaveAttribute('target', '_blank');
     await expect(openLink).toHaveAttribute('rel', /noopener/);
 });
