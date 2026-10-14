@@ -79,11 +79,9 @@ test.describe('content library page', () => {
             cards.first().getByRole('heading', { name: sorted[0]!.title }),
         ).toBeVisible();
         await expect(
-            cards
-                .last()
-                .getByRole('heading', {
-                    name: sorted[sorted.length - 1]!.title,
-                }),
+            cards.last().getByRole('heading', {
+                name: sorted[sorted.length - 1]!.title,
+            }),
         ).toBeVisible();
     });
 });
