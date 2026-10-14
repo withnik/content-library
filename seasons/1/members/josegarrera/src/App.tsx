@@ -1,13 +1,16 @@
 import { PageHeader } from '@primer/react';
 
 import { ContentLibrary } from './ContentLibrary';
-import { type ContentItem, sortNewestFirst } from './contentItem';
+import {
+    type ContentRecord,
+    presentContentLibrary,
+} from './contentLibraryViewModel';
 
 type AppProps = {
-    items: ContentItem[];
+    records: ContentRecord[];
 };
 
-export function App({ items }: AppProps) {
+export function App({ records }: AppProps) {
     return (
         <main className="mx-auto flex max-w-3xl flex-col gap-4 p-6">
             <PageHeader role="banner" aria-label="Content Library">
@@ -15,7 +18,7 @@ export function App({ items }: AppProps) {
                     <PageHeader.Title as="h1">Content Library</PageHeader.Title>
                 </PageHeader.TitleArea>
             </PageHeader>
-            <ContentLibrary items={sortNewestFirst(items)} />
+            <ContentLibrary cards={presentContentLibrary(records)} />
         </main>
     );
 }
