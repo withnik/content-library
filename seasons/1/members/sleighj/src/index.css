@@ -1,0 +1,7 @@
+/* Tailwind, set up to decorate Primer rather than fight it. */
+@import '@withnik/configs/tailwind.css';
+
+/* Scope class detection to this app's own sources. Without it Tailwind walks
+   up to the repository root and scans every other member's folder too. */
+@source '../src';
+@source '../__tests__';

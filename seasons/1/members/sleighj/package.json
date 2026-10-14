@@ -1,0 +1,20 @@
+{
+    "name": "@content-library/sleighj",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "typecheck": "tsc --noEmit",
+        "lint": "eslint --report-unused-disable-directives",
+        "lint:fix": "eslint --report-unused-disable-directives --fix",
+        "format": "prettier --write 'src/**/*.{ts,tsx,css,md}' '__tests__/**/*.{ts,tsx}'",
+        "test:unit": "vitest run",
+        "test:unit:watch": "vitest",
+        "test:integration": "playwright test --ui",
+        "test:integration:headless": "playwright test"
+    },
+    "devDependencies": {
+        "@withnik/configs": "*"
+    }
+}
