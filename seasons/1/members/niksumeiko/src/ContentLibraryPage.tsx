@@ -23,7 +23,9 @@ export type ContentLibraryPageProps = {
 // no generic Box/Card component, so the item's frame is a plain element
 // spaced out with Tailwind, matching the convention set in App.tsx.
 export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
-    const [item] = items;
+    // Non-null: this iteration always renders the first item; an empty
+    // `items` array isn't a case this component handles yet.
+    const item = items[0]!;
 
     return (
         <main className="flex flex-col gap-4 p-6">
@@ -33,38 +35,42 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                 </PageHeader.TitleArea>
             </PageHeader>
 
-            {item && (
-                <div
-                    data-testid={`content-item-${item.id}`}
-                    className="rounded-md border border-gray-300 p-4"
-                >
-                    <Stack direction="vertical" gap="condensed">
-                        <Stack direction="horizontal" justify="space-between" align="start">
-                            <Link
-                                href={item.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <Heading as="h3" variant="small">
-                                    {item.title}
-                                </Heading>
-                            </Link>
-                            <Button
-                                as="a"
-                                href={item.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Open
-                            </Button>
-                        </Stack>
-                        <Text as="p" size="small">
-                            {item.type} · {item.publishedAt}
-                        </Text>
-                        <Text as="p">{item.excerpt}</Text>
+            {/* TODO: loop over `items`, sorted newest first, once the
+                list iteration lands. */}
+            <div
+                data-testid={`content-item-${item.id}`}
+                className="rounded-md border border-gray-300 p-4"
+            >
+                <Stack direction="vertical" gap="condensed">
+                    <Stack
+                        direction="horizontal"
+                        justify="space-between"
+                        align="start"
+                    >
+                        <Link
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Heading as="h3" variant="small">
+                                {item.title}
+                            </Heading>
+                        </Link>
+                        <Button
+                            as="a"
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Open
+                        </Button>
                     </Stack>
-                </div>
-            )}
+                    <Text as="p" size="small">
+                        {item.type} · {item.publishedAt}
+                    </Text>
+                    <Text as="p">{item.excerpt}</Text>
+                </Stack>
+            </div>
         </main>
     );
 }
