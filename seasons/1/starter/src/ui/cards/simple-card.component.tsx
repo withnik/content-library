@@ -18,9 +18,13 @@ const SimpleCard = ({
 }: SimpleCardProps) => {
   return (
     <Card>
-      <Card.Heading>{headerText}</Card.Heading>
+      <Card.Heading>
+        <a href={href}>{headerText}</a>
+      </Card.Heading>
       <Card.Action>
-        <Button as="a" href={href} size="small">Open</Button>
+        <Button as="a" href={href} size="small">
+          Open
+        </Button>
       </Card.Action>
       <Card.Description>{descriptionText}</Card.Description>
       <Card.Metadata>{subheaderText} · {timeText}</Card.Metadata>
