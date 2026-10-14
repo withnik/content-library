@@ -1,5 +1,3 @@
-import { formatPublishedAt, sortNewestFirst } from './contentItem';
-
 export type ContentRecord = {
     id: string;
     title: string;
@@ -29,4 +27,23 @@ export function presentContentLibrary(records: ContentRecord[]): ContentCard[] {
             publishedDate: formatPublishedAt(publishedAt),
         }),
     );
+}
+
+function sortNewestFirst(records: ContentRecord[]): ContentRecord[] {
+    return [...records].sort(
+        (left, right) =>
+            Date.parse(right.publishedAt) - Date.parse(left.publishedAt),
+    );
+}
+
+function formatPublishedAt(publishedAt: string): string {
+    const publishedAtFormat = new Intl.DateTimeFormat('en-US', {
+        dateStyle: 'medium',
+    });
+
+    return publishedAtFormat.format(parseCalendarDay(publishedAt));
+}
+
+function parseCalendarDay(isoDate: string): Date {
+    return new Date(`${isoDate}T00:00:00`);
 }

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
     type ContentRecord,
@@ -58,5 +58,35 @@ describe('The content library', () => {
             expect.objectContaining({ id: 'c_0002' }),
             expect.objectContaining({ id: 'c_0001' }),
         ]);
+    });
+
+    describe('published date', () => {
+        afterEach(() => {
+            vi.unstubAllEnvs();
+        });
+
+        it('keeps the calendar day west of Greenwich', () => {
+            vi.stubEnv('TZ', 'Pacific/Honolulu');
+
+            const cards = presentContentLibrary([
+                aContentRecord({ publishedAt: '2026-04-02' }),
+            ]);
+
+            expect(cards).toEqual([
+                expect.objectContaining({ publishedDate: 'Apr 2, 2026' }),
+            ]);
+        });
+
+        it('keeps the calendar day east of Greenwich', () => {
+            vi.stubEnv('TZ', 'Asia/Tokyo');
+
+            const cards = presentContentLibrary([
+                aContentRecord({ publishedAt: '2026-04-02' }),
+            ]);
+
+            expect(cards).toEqual([
+                expect.objectContaining({ publishedDate: 'Apr 2, 2026' }),
+            ]);
+        });
     });
 });
