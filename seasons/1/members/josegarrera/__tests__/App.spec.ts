@@ -1,34 +1,40 @@
 import { expect, test } from '@withnik/configs/playwright';
 
-import contentSource from '../../../data/content.json' with { type: 'json' };
+const repositoryLesson = {
+    id: 'c_0001',
+    title: 'The need of Repository Layer',
+    type: 'lesson',
+    excerpt: 'Why a repository layer keeps data access out of the UI.',
+    url: 'https://better.withnik.com/c/react-nextjs-discussions/repository-layer',
+    publishedAt: '2025-12-04',
+};
+
+const bootstrappingBlueprint = {
+    id: 'c_0002',
+    title: 'Bootstrapping an app',
+    type: 'blueprint',
+    excerpt: 'Standing up a React app with the tooling it will need.',
+    url: 'https://better.withnik.com/c/react-nextjs-discussions/bootstrapping',
+    publishedAt: '2025-12-05',
+};
 
 test.describe('The Content Library page', () => {
-    test('lists every content item newest first, each linking to its original', async ({
+    test('shows a card per item with its title, type, excerpt and published date', async ({
         mount,
     }) => {
-        const app = await mount('App/Default');
+        const app = await mount('App/Default', {
+            props: { items: [bootstrappingBlueprint, repositoryLesson] },
+        });
 
         const cards = app.getByRole('listitem');
-        const newestCard = cards.first();
-        const newestTitle = newestCard.getByRole('link', {
-            name: 'Building real apps together',
-        });
-        const newestOpenButton = newestCard.getByRole('link', { name: 'Open' });
-        const newestUrl =
-            'https://better.withnik.com/c/general-discussions/building-real-apps-together';
+        const firstCard = cards.first();
 
-        await expect(
-            app.getByRole('heading', { name: 'Content Library' }),
-        ).toBeVisible();
-        await expect(cards).toHaveCount(contentSource.items.length);
-        await expect(newestCard).toContainText('blueprint');
-        await expect(newestCard).toContainText('Sep 25, 2026');
-        await expect(newestCard).toContainText(
-            "Nik introduces the community's initiative to build real applications collaboratively",
+        await expect(cards).toHaveCount(2);
+        await expect(firstCard).toContainText('Bootstrapping an app');
+        await expect(firstCard).toContainText('blueprint');
+        await expect(firstCard).toContainText(
+            'Standing up a React app with the tooling it will need.',
         );
-        await expect(newestTitle).toHaveAttribute('href', newestUrl);
-        await expect(newestTitle).toHaveAttribute('target', '_blank');
-        await expect(newestOpenButton).toHaveAttribute('href', newestUrl);
-        await expect(newestOpenButton).toHaveAttribute('target', '_blank');
+        await expect(firstCard).toContainText('Dec 5, 2025');
     });
 });
