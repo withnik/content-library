@@ -3,5 +3,8 @@
 // the id is the file's path under __tests__/ plus the export name — this
 // one is mount('App/Default').
 import { App } from '../src/App';
+import type { ContentRecord } from '../src/contentLibraryViewModel';
 
-export const Default = () => <App />;
+export const Default = ({ records }: { records: ContentRecord[] }) => (
+    <App records={records} />
+);

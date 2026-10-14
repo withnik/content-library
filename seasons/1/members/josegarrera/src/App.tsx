@@ -1,11 +1,24 @@
-import { Heading } from '@primer/react';
+import { PageHeader } from '@primer/react';
 
-// Primer builds the UI; Tailwind only spaces it out. Utilities cannot reach
-// inside a Primer component's own styles — that is deliberate.
-export function App() {
+import { ContentLibrary } from './ContentLibrary';
+import {
+    type ContentRecord,
+    presentContentLibrary,
+} from './contentLibraryViewModel';
+
+type AppProps = {
+    records: ContentRecord[];
+};
+
+export function App({ records }: AppProps) {
     return (
-        <main className="flex flex-col gap-4 p-6">
-            <Heading as="h1">Content Library</Heading>
+        <main className="mx-auto flex max-w-3xl flex-col gap-4 p-6">
+            <PageHeader role="banner" aria-label="Content Library">
+                <PageHeader.TitleArea>
+                    <PageHeader.Title as="h1">Content Library</PageHeader.Title>
+                </PageHeader.TitleArea>
+            </PageHeader>
+            <ContentLibrary cards={presentContentLibrary(records)} />
         </main>
     );
 }
