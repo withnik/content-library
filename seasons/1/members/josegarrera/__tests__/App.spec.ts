@@ -19,6 +19,14 @@ const bootstrappingBlueprint = {
 };
 
 test.describe('The Content Library page', () => {
+    test('is titled Content Library', async ({ mount }) => {
+        const app = await mount('App/Default', { props: { items: [] } });
+
+        await expect(
+            app.getByRole('heading', { name: 'Content Library' }),
+        ).toBeVisible();
+    });
+
     test('shows a card per item with its title, type, excerpt and published date', async ({
         mount,
     }) => {
@@ -49,5 +57,29 @@ test.describe('The Content Library page', () => {
             'Bootstrapping an app',
             'The need of Repository Layer',
         ]);
+    });
+
+    test('opens the original in a new tab from the title and the Open button', async ({
+        mount,
+    }) => {
+        const app = await mount('App/Default', {
+            props: { items: [repositoryLesson] },
+        });
+
+        const title = app.getByRole('link', {
+            name: 'The need of Repository Layer',
+        });
+        const openButton = app.getByRole('link', { name: 'Open' });
+
+        await expect(title).toHaveAttribute(
+            'href',
+            'https://better.withnik.com/c/react-nextjs-discussions/repository-layer',
+        );
+        await expect(title).toHaveAttribute('target', '_blank');
+        await expect(openButton).toHaveAttribute(
+            'href',
+            'https://better.withnik.com/c/react-nextjs-discussions/repository-layer',
+        );
+        await expect(openButton).toHaveAttribute('target', '_blank');
     });
 });
