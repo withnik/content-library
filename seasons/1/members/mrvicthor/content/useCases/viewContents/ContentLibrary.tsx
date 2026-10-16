@@ -1,10 +1,9 @@
 import data from '../../../../../data/content.json';
+import { sortByNewest } from '../../../helpers/sortByNewest';
 import { ContentCard } from './ContentCard';
 export const ContentLibrary = () => {
     const { items } = data;
-    const orderedItems = [...items].sort((a, b) =>
-        b.publishedAt.localeCompare(a.publishedAt),
-    );
+    const orderedItems = sortByNewest(items);
 
     return (
         <ul className="flex list-none flex-col gap-3 px-4">

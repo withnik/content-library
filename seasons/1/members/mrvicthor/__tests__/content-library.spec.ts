@@ -1,9 +1,8 @@
 import { expect, test } from '@withnik/configs/playwright';
 import data from '../../../data/content.json' with { type: 'json' };
+import { sortByNewest } from '../helpers/sortByNewest';
 
-const newestFirst = [...data.items].sort((a, b) =>
-    b.publishedAt.localeCompare(a.publishedAt),
-);
+const newestFirst = sortByNewest(data.items);
 
 test.describe('Content Library', () => {
     test.beforeEach(async ({ mount }) => {
