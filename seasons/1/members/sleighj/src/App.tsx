@@ -5,14 +5,18 @@ import type { ContentItem } from './types/content.types';
 import SimpleCard from './ui/cards/simple-card.component';
 import { formatPublishedAt } from './lib/format-published-at';
 
-export function App() {
-  const content: ContentItem[] = sortByPublishedAtDesc(data.items);
+type AppProps = {
+  contentItems?: ContentItem[];
+};
+
+export const App = ({ contentItems = data.items }: AppProps) => {
+  const sortedContentItems: ContentItem[] = sortByPublishedAtDesc(contentItems);
 
   return (
     <main className="flex flex-col gap-4 p-6">
       <Heading as="h1">Content Library</Heading>
-      {content.map((item: ContentItem) => {
-        const { id, title, excerpt, type, publishedAt, url } = item;
+      {sortedContentItems.map((contentItem: ContentItem) => {
+        const { id, title, excerpt, type, publishedAt, url } = contentItem;
         const formattedPublishedAt = formatPublishedAt(publishedAt);
         return (
           <SimpleCard
