@@ -1,5 +1,5 @@
 import { Button, Heading, Link, PageHeader, Stack, Text } from '@primer/react';
-import { createContentLibraryViewModel } from './contentLibraryViewModel';
+import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
 
 // Raw content record shape — matches a single entry in data/content.json.
 // `media` is optional because the real data file omits it; test fixtures may
@@ -21,7 +21,7 @@ export type ContentLibraryPageProps = {
 };
 
 export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
-    const viewModel = createContentLibraryViewModel(items);
+    const viewModel = createContentLibraryViewModel(items, navigator.language);
 
     return (
         <main className="flex flex-col gap-4 p-6">

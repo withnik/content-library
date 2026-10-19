@@ -1,12 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { createContentLibraryViewModel } from '../src/contentLibraryViewModel';
+import { createContentLibraryViewModel } from '../src/ContentLibraryViewModelService.ts';
 import type { ContentItem } from '../src/ContentLibraryPage.tsx';
 
 describe('content library ViewModel', () => {
     it('returns empty model when source data is unavailable', () => {
         const items: ContentItem[] = [];
+        const locale = 'en-US';
 
-        const viewModel = createContentLibraryViewModel(items);
+        const viewModel = createContentLibraryViewModel(items, locale);
 
         expect(viewModel.items).toEqual([]);
     });
@@ -47,8 +48,9 @@ describe('content library ViewModel', () => {
                 thumbnailUrl: null,
             },
         ];
+        const locale = 'en-US';
 
-        const model = createContentLibraryViewModel(items);
+        const model = createContentLibraryViewModel(items, locale);
 
         expect(model.items).toEqual([
             {
