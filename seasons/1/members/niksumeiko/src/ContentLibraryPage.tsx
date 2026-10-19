@@ -1,9 +1,6 @@
 import { Button, Heading, Link, PageHeader, Stack, Text } from '@primer/react';
 import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
 
-// Raw content record shape — matches a single entry in data/content.json.
-// `media` is optional because the real data file omits it; test fixtures may
-// still carry it for future iterations.
 export type ContentItem = {
     id: string;
     title: string;
@@ -32,41 +29,44 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
             </PageHeader>
 
             {viewModel.items.map((item) => (
-                <div
+                <ul
                     key={item.id}
                     data-testid={`content-item-${item.id}`}
                     className="rounded-md border border-gray-300 p-4"
                 >
-                    <Stack direction="vertical" gap="condensed">
-                        <Stack
-                            direction="horizontal"
-                            justify="space-between"
-                            align="start"
-                        >
-                            <Link
-                                href={item.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                    <li>
+                        <Stack direction="vertical" gap="condensed">
+                            <Stack
+                                direction="horizontal"
+                                justify="space-between"
+                                align="start"
                             >
                                 <Heading as="h3" variant="small">
-                                    {item.title}
+                                    <Link
+                                        href={item.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {item.title}
+                                    </Link>
                                 </Heading>
-                            </Link>
-                            <Button
-                                as="a"
-                                href={item.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                Open
-                            </Button>
+                                <Button
+                                    as="a"
+                                    role="button"
+                                    href={item.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Open
+                                </Button>
+                            </Stack>
+                            <Text as="p" size="small">
+                                {item.type} · {item.date}
+                            </Text>
+                            <Text as="p">{item.excerpt}</Text>
                         </Stack>
-                        <Text as="p" size="small">
-                            {item.type} · {item.date}
-                        </Text>
-                        <Text as="p">{item.excerpt}</Text>
-                    </Stack>
-                </div>
+                    </li>
+                </ul>
             ))}
         </main>
     );
