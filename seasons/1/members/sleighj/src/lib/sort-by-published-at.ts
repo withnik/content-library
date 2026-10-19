@@ -1,10 +1,12 @@
 import type { ContentItem } from '../types/content.types';
 
-/** Newest `publishedAt` first. Does not mutate the input. */
 export function sortByPublishedAtDesc(
-    items: readonly ContentItem[],
+  items: readonly ContentItem[],
 ): ContentItem[] {
-    return [...items].sort((a, b) =>
-        b.publishedAt.localeCompare(a.publishedAt),
-    );
-}
+  const sorted = [...items].toSorted((a, b) => {
+    if (a.publishedAt > b.publishedAt) return -1;
+    if (a.publishedAt < b.publishedAt) return 1;
+    return 0;
+  });
+  return sorted;
+};
