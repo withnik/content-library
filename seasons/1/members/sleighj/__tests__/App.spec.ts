@@ -1,14 +1,36 @@
-// Smoke test for the integration layer (Playwright, real Chromium). It
-// mounts the story next door — no Testing Library anywhere. Replace freely.
 import { expect, test } from '@withnik/configs/playwright';
 
-test('renders the page heading with Primer styles', async ({ mount }) => {
-    const app = await mount('App/Default');
+import { formatPublishedAt } from '../src/lib/format-published-at';
 
-    const heading = app.getByRole('heading', { name: 'Content Library' });
-    await expect(heading).toBeVisible();
-    // Proves the Primer theme is live: the fg token resolves to a real colour.
-    await expect(heading).toHaveCSS('color', 'rgb(31, 35, 40)');
-    // ...and that Tailwind's layout utilities are applied too.
-    await expect(app.locator('main')).toHaveCSS('gap', '16px');
+test('content library user journey', async ({ mount }) => {
+    const app = await mount('App/WithStubItems');
+
+    await expect(
+        app.getByRole('heading', { name: 'Content Library' }),
+    ).toBeVisible();
+
+    const cards = app.locator('[data-component="Card"]');
+    await expect(cards).toHaveCount(2);
+
+    const first = cards.nth(0);
+    const second = cards.nth(1);
+
+    await expect(
+        first.getByRole('heading', { name: 'Newer item' }),
+    ).toBeVisible();
+    await expect(first.getByText('Newer excerpt')).toBeVisible();
+    await expect(
+        first.getByText(`recording · ${formatPublishedAt('2026-09-25')}`),
+    ).toBeVisible();
+    await expect(
+        first.getByRole('link', { name: 'Newer item' }),
+    ).toHaveAttribute('href', 'https://example.com/new');
+    await expect(first.getByRole('link', { name: 'Open' })).toHaveAttribute(
+        'href',
+        'https://example.com/new',
+    );
+
+    await expect(
+        second.getByRole('heading', { name: 'Older item' }),
+    ).toBeVisible();
 });
