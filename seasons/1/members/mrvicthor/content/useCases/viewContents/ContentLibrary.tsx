@@ -1,13 +1,20 @@
-import data from '../../../../../data/content.json';
-import { sortByNewest } from '../../../helpers/sortByNewest';
 import { ContentCard } from './ContentCard';
-export const ContentLibrary = () => {
-    const { items } = data;
-    const orderedItems = sortByNewest(items);
 
+type ContentProps = {
+    items: {
+        id: string;
+        title: string;
+        type: string;
+        author: string;
+        excerpt: string;
+        publishedAt: string;
+        url: string;
+    }[];
+};
+export const ContentLibrary = ({ items }: ContentProps) => {
     return (
         <ul className="flex list-none flex-col gap-3 px-4">
-            {orderedItems.map((c) => (
+            {items.map((c) => (
                 <li key={c.id}>
                     <ContentCard
                         description={c.excerpt}
