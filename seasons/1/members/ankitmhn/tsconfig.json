@@ -1,0 +1,4 @@
+{
+    "extends": "@withnik/configs/tsconfig.base.json",
+    "include": ["src", "__tests__", "*.config.ts"]
+}
