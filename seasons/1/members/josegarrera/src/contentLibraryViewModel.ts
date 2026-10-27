@@ -50,7 +50,10 @@ export function resolveSelectedType(
     storedType: string | null,
     contentTypes: string[],
 ): string | null {
-    return storedType;
+    const isStillInContent =
+        storedType !== null && contentTypes.includes(storedType);
+
+    return isStillInContent ? storedType : null;
 }
 
 function sortNewestFirst(records: ContentRecord[]): ContentRecord[] {

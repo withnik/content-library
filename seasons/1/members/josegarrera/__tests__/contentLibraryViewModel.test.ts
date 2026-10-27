@@ -153,6 +153,14 @@ describe('The content library', () => {
 
             expect(selectedType).toBe('recording');
         });
+
+        it('shows all types when the remembered type is no longer in the content', () => {
+            const contentTypes = ['lesson', 'recording'];
+
+            const selectedType = resolveSelectedType('gameworks', contentTypes);
+
+            expect(selectedType).toBeNull();
+        });
     });
 
     describe('published date', () => {
