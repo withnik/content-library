@@ -50,12 +50,9 @@ describe('ContentDashboard', () => {
         // Given content items with different types
         const recording = anItem()
             .entitled('A recording')
-            .with({ type: 'recording' })
+            .withType('recording')
             .build();
-        const lesson = anItem()
-            .entitled('A lesson')
-            .with({ type: 'lesson' })
-            .build();
+        const lesson = anItem().entitled('A lesson').withType('lesson').build();
 
         // When the dashboard is rendered
         const dashboard = await mount('ContentDashboard/Default', {
@@ -95,12 +92,9 @@ describe('ContentDashboard', () => {
         // Given content items and stored selected type
         const recording = anItem()
             .entitled('A recording')
-            .with({ type: 'recording' })
+            .withType('recording')
             .build();
-        const lesson = anItem()
-            .entitled('A lesson')
-            .with({ type: 'lesson' })
-            .build();
+        const lesson = anItem().entitled('A lesson').withType('lesson').build();
 
         // When the dashboard is rendered
         const dashboard = await mount('ContentDashboard/Default', {

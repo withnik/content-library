@@ -23,8 +23,8 @@ interface ContentDashboardProps {
 
 export function ContentDashboard({ items, locale }: ContentDashboardProps) {
     const storage = useKeyValueStorage();
-    const [selectedType, setSelectedType] = useState<string | null>(() =>
-        storage.get(selectedTypeStorageKey) ?? null,
+    const [selectedType, setSelectedType] = useState<string | null>(
+        () => storage.get(selectedTypeStorageKey) ?? null,
     );
     const viewModel = createContentDashboardViewModel(items, {
         locale,
@@ -67,9 +67,7 @@ export function ContentDashboard({ items, locale }: ContentDashboardProps) {
                     >
                         <div className="flex flex-wrap items-center gap-2">
                             <Label>{item.type}</Label>
-                            <Text as="time">
-                                {item.publishedAtFormatted}
-                            </Text>
+                            <Text as="time">{item.publishedAtFormatted}</Text>
                         </div>
 
                         <Heading as="h2">

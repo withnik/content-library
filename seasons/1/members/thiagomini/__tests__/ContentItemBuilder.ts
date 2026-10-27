@@ -15,6 +15,10 @@ class ContentItemBuilder {
         return this.with({ url });
     }
 
+    withType(type: ContentItem['type']) {
+        return this.with({ type });
+    }
+
     with(overrides: Partial<ContentItem>) {
         Object.assign(this.overrides, overrides);
         return this;

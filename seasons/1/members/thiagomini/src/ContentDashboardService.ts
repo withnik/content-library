@@ -48,8 +48,7 @@ export function createContentDashboardViewModel(
         types,
         items: items
             .filter(
-                (item) =>
-                    selectedType === null || item.type === selectedType,
+                (item) => selectedType === null || item.type === selectedType,
             )
             .toSorted((firstItem, secondItem) =>
                 secondItem.publishedAt.localeCompare(firstItem.publishedAt),
