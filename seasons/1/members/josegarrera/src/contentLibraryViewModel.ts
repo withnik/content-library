@@ -46,6 +46,13 @@ export function listContentTypes(records: ContentRecord[]): string[] {
     return [...uniqueTypes].sort();
 }
 
+export function resolveSelectedType(
+    storedType: string | null,
+    contentTypes: string[],
+): string | null {
+    return storedType;
+}
+
 function sortNewestFirst(records: ContentRecord[]): ContentRecord[] {
     return [...records].sort(
         (left, right) =>

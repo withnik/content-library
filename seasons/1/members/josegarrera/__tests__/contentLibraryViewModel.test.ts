@@ -4,6 +4,7 @@ import {
     type ContentRecord,
     listContentTypes,
     presentContentLibrary,
+    resolveSelectedType,
 } from '../src/contentLibraryViewModel';
 
 function aContentRecord(overrides: Partial<ContentRecord>): ContentRecord {
@@ -141,6 +142,16 @@ describe('The content library', () => {
             const contentTypes = listContentTypes(records);
 
             expect(contentTypes).toEqual(['blueprint', 'lesson', 'recording']);
+        });
+    });
+
+    describe('selected type', () => {
+        it('restores a remembered type that is still in the content', () => {
+            const contentTypes = ['lesson', 'recording'];
+
+            const selectedType = resolveSelectedType('recording', contentTypes);
+
+            expect(selectedType).toBe('recording');
         });
     });
 
