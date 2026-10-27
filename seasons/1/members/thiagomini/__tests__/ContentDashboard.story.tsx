@@ -1,5 +1,6 @@
 import { ContentDashboard } from '../src/ContentDashboard';
 import type { ContentItem } from '../src/ContentDashboardService';
+import { KeyValueStorageContext } from '../src/KeyValueStorage';
 
 const singleItem = [
     {
@@ -25,6 +26,24 @@ export const Default = ({
     items: readonly ContentItem[];
     locale: string;
 }) => <ContentDashboard items={items} locale={locale} />;
+
+export const WithStoredLesson = ({
+    items,
+    locale,
+}: {
+    items: readonly ContentItem[];
+    locale: string;
+}) => {
+    const storage = new Map<string, string>([
+        ['content-library.selected-type', 'lesson'],
+    ]);
+
+    return (
+        <KeyValueStorageContext.Provider value={storage}>
+            <ContentDashboard items={items} locale={locale} />
+        </KeyValueStorageContext.Provider>
+    );
+};
 
 export const Empty = () => (
     <ContentDashboard items={[]} locale={navigator.language} />

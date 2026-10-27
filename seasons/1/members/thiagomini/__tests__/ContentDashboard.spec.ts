@@ -35,4 +35,63 @@ describe('ContentDashboard', () => {
 
         await expect(dashboard.getByRole('listitem')).toHaveCount(0);
     });
+
+    test('filters content by type and resets to all content', async ({
+        mount,
+    }) => {
+        const recording = anItem()
+            .entitled('A recording')
+            .with({ type: 'recording' })
+            .build();
+        const lesson = anItem()
+            .entitled('A lesson')
+            .with({ type: 'lesson' })
+            .build();
+        const dashboard = await mount('ContentDashboard/Default', {
+            props: {
+                items: [recording, lesson],
+                locale: 'en-US',
+            },
+        });
+        const filter = dashboard.getByLabel('Filter content by type');
+
+        await expect(filter.getByRole('option')).toHaveText([
+            'All',
+            'lesson',
+            'recording',
+        ]);
+        await filter.selectOption('recording');
+        await expect(dashboard.getByRole('listitem')).toHaveCount(1);
+        await expect(dashboard.getByRole('listitem')).toContainText(
+            recording.title,
+        );
+
+        await filter.selectOption('');
+        await expect(dashboard.getByRole('listitem')).toHaveCount(2);
+    });
+
+    test('restores the selected type from provided storage', async ({
+        mount,
+    }) => {
+        const recording = anItem()
+            .entitled('A recording')
+            .with({ type: 'recording' })
+            .build();
+        const lesson = anItem()
+            .entitled('A lesson')
+            .with({ type: 'lesson' })
+            .build();
+        const dashboard = await mount('ContentDashboard/WithStoredLesson', {
+            props: {
+                items: [recording, lesson],
+                locale: 'en-US',
+            },
+        });
+
+        await expect(
+            dashboard.getByLabel('Filter content by type'),
+        ).toHaveValue('lesson');
+        await expect(dashboard.getByRole('listitem')).toHaveCount(1);
+        await expect(dashboard.getByRole('listitem')).toContainText(lesson.title);
+    });
 });
