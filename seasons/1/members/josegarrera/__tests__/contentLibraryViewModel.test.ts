@@ -76,6 +76,28 @@ describe('The content library', () => {
                 expect.objectContaining({ id: 'c_0002' }),
             ]);
         });
+
+        it('keeps every type when no type is selected', () => {
+            const lesson = aContentRecord({
+                id: 'c_0001',
+                type: 'lesson',
+                publishedAt: '2026-01-02',
+            });
+            const recording = aContentRecord({
+                id: 'c_0002',
+                type: 'recording',
+                publishedAt: '2026-01-01',
+            });
+
+            const cards = presentContentLibrary([lesson, recording], {
+                type: null,
+            });
+
+            expect(cards).toEqual([
+                expect.objectContaining({ id: 'c_0001' }),
+                expect.objectContaining({ id: 'c_0002' }),
+            ]);
+        });
     });
 
     describe('published date', () => {

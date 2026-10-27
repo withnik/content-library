@@ -22,10 +22,10 @@ export type ContentFilter = {
 
 export function presentContentLibrary(
     records: ContentRecord[],
-    filter?: ContentFilter,
+    filter: ContentFilter = { type: null },
 ): ContentCard[] {
     const matchingRecords = records.filter(
-        (record) => !filter || record.type === filter.type,
+        (record) => filter.type === null || record.type === filter.type,
     );
 
     return sortNewestFirst(matchingRecords).map(
