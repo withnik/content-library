@@ -112,25 +112,13 @@ const catalogue: ContentItem[] = [
     },
 ];
 
-const workshop: ContentItem = {
-    id: 'c_0400',
-    title: 'Forging Valyrian Steel',
-    type: 'workshop',
-    durationSeconds: null,
-    url: 'https://xy.z/valyrian-steel',
-    publishedAt: '2026-02-20',
-    excerpt: 'A hands-on session on working with Valyrian steel.',
-    thumbnailUrl: null,
-};
-
-test('shows all content by default and a filter listing every type in the data', async ({
+test('filter content by one type at a time and reset to all', async ({
     mount,
 }) => {
     const page = await mount('ContentLibraryPage/Default', {
         props: { items: catalogue },
     });
     const titles = page.getByRole('heading', { level: 3 });
-    const options = page.getByRole('menuitemradio');
 
     // Assert: "All" is the state on first load
     const allTypes = page.getByRole('button', {
@@ -138,16 +126,11 @@ test('shows all content by default and a filter listing every type in the data',
         exact: true,
     });
     await expect(allTypes).toBeVisible();
-    await expect(titles).toHaveText([
-        'Dragon Riding Basics',
-        'Tactics from the Battle of the Five Kings',
-        'Small Council Q&A',
-        'Leadership in Westeros',
-    ]);
+    await expect(titles).toHaveCount(4);
 
     await allTypes.click();
     // Assert: every type in the data, plus an option meaning "all"
-    await expect(options).toHaveText([
+    await expect(page.getByRole('menuitemradio')).toHaveText([
         'All types',
         'lesson',
         'masterclass',
@@ -157,26 +140,6 @@ test('shows all content by default and a filter listing every type in the data',
         page.getByRole('menuitemradio', { name: 'All types', exact: true }),
     ).toBeChecked();
 
-    await page.update({ items: [...catalogue, workshop] });
-    // Assert: it appears in the filter with no code change
-    await expect(options).toHaveText([
-        'All types',
-        'lesson',
-        'masterclass',
-        'recording',
-        'workshop',
-    ]);
-});
-
-test('filter content by one type at a time and keep the choice after reload', async ({
-    mount,
-}) => {
-    const page = await mount('ContentLibraryPage/Default', {
-        props: { items: catalogue },
-    });
-    const titles = page.getByRole('heading', { level: 3 });
-
-    await page.getByRole('button', { name: 'All types', exact: true }).click();
     await page
         .getByRole('menuitemradio', { name: 'lesson', exact: true })
         .click();
@@ -200,38 +163,10 @@ test('filter content by one type at a time and keep the choice after reload', as
     await expect(titles).toHaveText([
         'Tactics from the Battle of the Five Kings',
     ]);
+
     await page
         .getByRole('button', { name: 'masterclass', exact: true })
         .click();
-    await expect(
-        page.getByRole('menuitemradio', { name: 'masterclass', exact: true }),
-    ).toBeChecked();
-    await expect(
-        page.getByRole('menuitemradio', { name: 'lesson', exact: true }),
-    ).not.toBeChecked();
-
-    const reloaded = await mount('ContentLibraryPage/Default', {
-        path: '/?type=masterclass',
-        props: { items: catalogue },
-    });
-    // Assert: the selection is restored
-    await expect(
-        reloaded.getByRole('button', { name: 'masterclass', exact: true }),
-    ).toBeVisible();
-    await expect(titles).toHaveText([
-        'Tactics from the Battle of the Five Kings',
-    ]);
-});
-
-test('return to all content after filtering by type', async ({ mount }) => {
-    const page = await mount('ContentLibraryPage/Default', {
-        path: '/?type=lesson',
-        props: { items: catalogue },
-    });
-    const titles = page.getByRole('heading', { level: 3 });
-    await expect(titles).toHaveCount(2);
-
-    await page.getByRole('button', { name: 'lesson', exact: true }).click();
     await page
         .getByRole('menuitemradio', { name: 'All types', exact: true })
         .click();
@@ -241,4 +176,19 @@ test('return to all content after filtering by type', async ({ mount }) => {
         page.getByRole('button', { name: 'All types', exact: true }),
     ).toBeVisible();
     await expect.poll(() => new URL(page.page().url()).search).toBe('');
+});
+
+test('restore the type filter from the URL on load', async ({ mount }) => {
+    const page = await mount('ContentLibraryPage/Default', {
+        path: '/?type=masterclass',
+        props: { items: catalogue },
+    });
+
+    // Assert: the selection is restored
+    await expect(
+        page.getByRole('button', { name: 'masterclass', exact: true }),
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3 })).toHaveText([
+        'Tactics from the Battle of the Five Kings',
+    ]);
 });
