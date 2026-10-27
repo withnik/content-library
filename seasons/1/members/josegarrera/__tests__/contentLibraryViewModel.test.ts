@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
     type ContentRecord,
+    listContentTypes,
     presentContentLibrary,
 } from '../src/contentLibraryViewModel';
 
@@ -125,6 +126,21 @@ describe('The content library', () => {
                 expect.objectContaining({ id: 'c_0001' }),
                 expect.objectContaining({ id: 'c_0002' }),
             ]);
+        });
+    });
+
+    describe('type filter options', () => {
+        it('offers each type present in the content once, alphabetically', () => {
+            const records = [
+                aContentRecord({ id: 'c_0001', type: 'recording' }),
+                aContentRecord({ id: 'c_0002', type: 'lesson' }),
+                aContentRecord({ id: 'c_0003', type: 'recording' }),
+                aContentRecord({ id: 'c_0004', type: 'blueprint' }),
+            ];
+
+            const contentTypes = listContentTypes(records);
+
+            expect(contentTypes).toEqual(['blueprint', 'lesson', 'recording']);
         });
     });
 

@@ -40,6 +40,12 @@ export function presentContentLibrary(
     );
 }
 
+export function listContentTypes(records: ContentRecord[]): string[] {
+    const uniqueTypes = new Set(records.map((record) => record.type));
+
+    return [...uniqueTypes].sort();
+}
+
 function sortNewestFirst(records: ContentRecord[]): ContentRecord[] {
     return [...records].sort(
         (left, right) =>
