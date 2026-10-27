@@ -22,26 +22,22 @@ export const WithSingleItem = () => (
 export const Default = ({
     items,
     locale,
+    storage,
 }: {
     items: readonly ContentItem[];
     locale: string;
-}) => <ContentDashboard items={items} locale={locale} />;
-
-export const WithStoredLesson = ({
-    items,
-    locale,
-}: {
-    items: readonly ContentItem[];
-    locale: string;
+    storage?: Record<string, string>;
 }) => {
-    const storage = new Map<string, string>([
-        ['content-library.selected-type', 'lesson'],
-    ]);
+    const dashboard = <ContentDashboard items={items} locale={locale} />;
 
-    return (
-        <KeyValueStorageContext.Provider value={storage}>
-            <ContentDashboard items={items} locale={locale} />
+    return storage ? (
+        <KeyValueStorageContext.Provider
+            value={new Map(Object.entries(storage))}
+        >
+            {dashboard}
         </KeyValueStorageContext.Provider>
+    ) : (
+        dashboard
     );
 };
 

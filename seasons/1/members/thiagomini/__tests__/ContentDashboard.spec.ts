@@ -81,10 +81,11 @@ describe('ContentDashboard', () => {
             .entitled('A lesson')
             .with({ type: 'lesson' })
             .build();
-        const dashboard = await mount('ContentDashboard/WithStoredLesson', {
+        const dashboard = await mount('ContentDashboard/Default', {
             props: {
                 items: [recording, lesson],
                 locale: 'en-US',
+                storage: { 'content-library.selected-type': 'lesson' },
             },
         });
 
@@ -92,6 +93,8 @@ describe('ContentDashboard', () => {
             dashboard.getByLabel('Filter content by type'),
         ).toHaveValue('lesson');
         await expect(dashboard.getByRole('listitem')).toHaveCount(1);
-        await expect(dashboard.getByRole('listitem')).toContainText(lesson.title);
+        await expect(dashboard.getByRole('listitem')).toContainText(
+            lesson.title,
+        );
     });
 });
