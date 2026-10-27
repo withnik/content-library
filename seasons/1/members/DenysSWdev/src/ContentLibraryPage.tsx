@@ -1,4 +1,14 @@
-import { Button, Heading, Link, PageHeader, Stack, Text } from '@primer/react';
+import { useState } from 'react';
+import {
+    ActionList,
+    ActionMenu,
+    Button,
+    Heading,
+    Link,
+    PageHeader,
+    Stack,
+    Text,
+} from '@primer/react';
 import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
 
 export type ContentItem = {
@@ -19,6 +29,26 @@ export type ContentLibraryPageProps = {
 
 export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
     const viewModel = createContentLibraryViewModel(items, navigator.language);
+    const [selectedType, setSelectedType] = useState(
+        () => new URLSearchParams(location.search).get('type') ?? '',
+    );
+    const types = [...new Set(items.map((item) => item.type))].sort();
+    const visibleItems = viewModel.items.filter(
+        (item) => !selectedType || item.type === selectedType,
+    );
+
+    const selectType = (type: string) => {
+        setSelectedType(type);
+        const params = new URLSearchParams(location.search);
+        if (type) params.set('type', type);
+        else params.delete('type');
+        const query = params.toString();
+        history.replaceState(
+            null,
+            '',
+            `${location.pathname}${query && `?${query}`}`,
+        );
+    };
 
     return (
         <main className="flex flex-col gap-4 p-6">
@@ -28,7 +58,26 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                 </PageHeader.TitleArea>
             </PageHeader>
 
-            {viewModel.items.map((item) => (
+            <ActionMenu>
+                <ActionMenu.Button className="self-start">
+                    {selectedType || 'All types'}
+                </ActionMenu.Button>
+                <ActionMenu.Overlay>
+                    <ActionList selectionVariant="single">
+                        {['', ...types].map((type) => (
+                            <ActionList.Item
+                                key={type}
+                                selected={type === selectedType}
+                                onSelect={() => selectType(type)}
+                            >
+                                {type || 'All types'}
+                            </ActionList.Item>
+                        ))}
+                    </ActionList>
+                </ActionMenu.Overlay>
+            </ActionMenu>
+
+            {visibleItems.map((item) => (
                 <ul
                     key={item.id}
                     data-testid={`content-item-${item.id}`}
