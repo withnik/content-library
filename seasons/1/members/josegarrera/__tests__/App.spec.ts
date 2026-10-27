@@ -44,3 +44,23 @@ test('lets a visitor find the newest content item and open its original', async 
     );
     await expect(openButton).toHaveAttribute('target', '_blank');
 });
+
+test('lets a visitor narrow the library to one type and go back to all types', async ({
+    mount,
+}) => {
+    const app = await mount('App/Default', {
+        props: { records: [bootstrappingBlueprint, repositoryLesson] },
+    });
+    const cards = app.getByRole('listitem');
+
+    await app.getByRole('button', { name: 'All types' }).click();
+    await app.page().getByRole('menuitemradio', { name: 'lesson' }).click();
+
+    await expect(cards).toHaveCount(1);
+    await expect(cards.first()).toContainText('The need of Repository Layer');
+
+    await app.getByRole('button', { name: 'lesson' }).click();
+    await app.page().getByRole('menuitemradio', { name: 'All types' }).click();
+
+    await expect(cards).toHaveCount(2);
+});
