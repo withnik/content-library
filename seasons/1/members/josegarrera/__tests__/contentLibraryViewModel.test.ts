@@ -74,9 +74,7 @@ describe('The content library', () => {
                 type: 'recording',
             });
 
-            expect(cards).toEqual([
-                expect.objectContaining({ id: 'c_0002' }),
-            ]);
+            expect(cards).toEqual([expect.objectContaining({ id: 'c_0002' })]);
         });
 
         it('keeps the latest published item of the selected type first', () => {
