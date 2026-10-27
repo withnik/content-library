@@ -6,15 +6,26 @@ import {
     type ContentRecord,
     listContentTypes,
     presentContentLibrary,
+    resolveSelectedType,
 } from './contentLibraryViewModel';
+import type { SelectedTypeStorage } from './selectedTypeStorage';
 import { TypeFilter } from './TypeFilter';
 
 type AppProps = {
     records: ContentRecord[];
+    selectedTypeStorage: SelectedTypeStorage;
 };
 
-export function App({ records }: AppProps) {
-    const [selectedType, setSelectedType] = useState<string | null>(null);
+export function App({ records, selectedTypeStorage }: AppProps) {
+    const contentTypes = listContentTypes(records);
+    const [selectedType, setSelectedType] = useState(() =>
+        resolveSelectedType(selectedTypeStorage.load(), contentTypes),
+    );
+
+    function selectType(type: string | null) {
+        setSelectedType(type);
+        selectedTypeStorage.save(type);
+    }
 
     return (
         <main className="mx-auto flex max-w-3xl flex-col gap-4 p-6">
@@ -25,9 +36,9 @@ export function App({ records }: AppProps) {
             </PageHeader>
             <div>
                 <TypeFilter
-                    contentTypes={listContentTypes(records)}
+                    contentTypes={contentTypes}
                     selectedType={selectedType}
-                    onSelect={setSelectedType}
+                    onSelect={selectType}
                 />
             </div>
             <ContentLibrary

@@ -18,6 +18,10 @@ const repositoryLesson = {
     publishedAt: '2025-12-04',
 };
 
+test.afterEach(async ({ page }) => {
+    await page.evaluate(() => localStorage.clear());
+});
+
 test('lets a visitor find the newest content item and open its original', async ({
     mount,
 }) => {
@@ -63,4 +67,18 @@ test('lets a visitor narrow the library to one type and go back to all types', a
     await app.page().getByRole('menuitemradio', { name: 'All types' }).click();
 
     await expect(cards).toHaveCount(2);
+});
+
+test('remembers the selected type for the next visit', async ({ mount }) => {
+    const records = [bootstrappingBlueprint, repositoryLesson];
+    const firstVisit = await mount('App/Default', { props: { records } });
+    await firstVisit.getByRole('button', { name: 'All types' }).click();
+    await firstVisit
+        .page()
+        .getByRole('menuitemradio', { name: 'lesson' })
+        .click();
+
+    const nextVisit = await mount('App/Default', { props: { records } });
+
+    await expect(nextVisit.getByRole('listitem')).toHaveCount(1);
 });
