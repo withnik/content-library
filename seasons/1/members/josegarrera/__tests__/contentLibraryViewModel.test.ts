@@ -77,6 +77,34 @@ describe('The content library', () => {
             ]);
         });
 
+        it('keeps the latest published item of the selected type first', () => {
+            const olderRecording = aContentRecord({
+                id: 'c_0001',
+                type: 'recording',
+                publishedAt: '2025-12-04',
+            });
+            const lesson = aContentRecord({
+                id: 'c_0002',
+                type: 'lesson',
+                publishedAt: '2026-03-01',
+            });
+            const newerRecording = aContentRecord({
+                id: 'c_0003',
+                type: 'recording',
+                publishedAt: '2026-09-25',
+            });
+
+            const cards = presentContentLibrary(
+                [olderRecording, lesson, newerRecording],
+                { type: 'recording' },
+            );
+
+            expect(cards).toEqual([
+                expect.objectContaining({ id: 'c_0003' }),
+                expect.objectContaining({ id: 'c_0001' }),
+            ]);
+        });
+
         it('keeps every type when no type is selected', () => {
             const lesson = aContentRecord({
                 id: 'c_0001',
