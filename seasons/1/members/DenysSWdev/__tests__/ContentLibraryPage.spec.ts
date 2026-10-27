@@ -112,7 +112,7 @@ const catalogue: ContentItem[] = [
     },
 ];
 
-test('filter content by one type at a time and reset to all', async ({
+test('filter content library by type and keep the choice after reload', async ({
     mount,
 }) => {
     const page = await mount('ContentLibraryPage/Default', {
@@ -164,31 +164,28 @@ test('filter content by one type at a time and reset to all', async ({
         'Tactics from the Battle of the Five Kings',
     ]);
 
-    await page
-        .getByRole('button', { name: 'masterclass', exact: true })
-        .click();
-    await page
-        .getByRole('menuitemradio', { name: 'All types', exact: true })
-        .click();
-    // Assert: there is a way back to showing all content
-    await expect(titles).toHaveCount(4);
-    await expect(
-        page.getByRole('button', { name: 'All types', exact: true }),
-    ).toBeVisible();
-    await expect.poll(() => new URL(page.page().url()).search).toBe('');
-});
-
-test('restore the type filter from the URL on load', async ({ mount }) => {
-    const page = await mount('ContentLibraryPage/Default', {
+    const reloaded = await mount('ContentLibraryPage/Default', {
         path: '/?type=masterclass',
         props: { items: catalogue },
     });
-
-    // Assert: the selection is restored
+    // Assert: the selection is restored after reload
     await expect(
-        page.getByRole('button', { name: 'masterclass', exact: true }),
+        reloaded.getByRole('button', { name: 'masterclass', exact: true }),
     ).toBeVisible();
-    await expect(page.getByRole('heading', { level: 3 })).toHaveText([
+    await expect(reloaded.getByRole('heading', { level: 3 })).toHaveText([
         'Tactics from the Battle of the Five Kings',
     ]);
+
+    await reloaded
+        .getByRole('button', { name: 'masterclass', exact: true })
+        .click();
+    await reloaded
+        .getByRole('menuitemradio', { name: 'All types', exact: true })
+        .click();
+    // Assert: there is a way back to showing all content
+    await expect(reloaded.getByRole('heading', { level: 3 })).toHaveCount(4);
+    await expect(
+        reloaded.getByRole('button', { name: 'All types', exact: true }),
+    ).toBeVisible();
+    await expect.poll(() => new URL(page.page().url()).search).toBe('');
 });
