@@ -16,8 +16,19 @@ export type ContentCard = {
     publishedDate: string;
 };
 
-export function presentContentLibrary(records: ContentRecord[]): ContentCard[] {
-    return sortNewestFirst(records).map(
+export type ContentFilter = {
+    type: string | null;
+};
+
+export function presentContentLibrary(
+    records: ContentRecord[],
+    filter: ContentFilter = { type: null },
+): ContentCard[] {
+    const matchingRecords = records.filter(
+        (record) => filter.type === null || record.type === filter.type,
+    );
+
+    return sortNewestFirst(matchingRecords).map(
         ({ id, title, type, excerpt, url, publishedAt }) => ({
             id,
             title,
@@ -27,6 +38,22 @@ export function presentContentLibrary(records: ContentRecord[]): ContentCard[] {
             publishedDate: formatPublishedAt(publishedAt),
         }),
     );
+}
+
+export function listContentTypes(records: ContentRecord[]): string[] {
+    const uniqueTypes = new Set(records.map((record) => record.type));
+
+    return [...uniqueTypes].sort();
+}
+
+export function resolveSelectedType(
+    storedType: string | null,
+    contentTypes: string[],
+): string | null {
+    const isStillInContent =
+        storedType !== null && contentTypes.includes(storedType);
+
+    return isStillInContent ? storedType : null;
 }
 
 function sortNewestFirst(records: ContentRecord[]): ContentRecord[] {
