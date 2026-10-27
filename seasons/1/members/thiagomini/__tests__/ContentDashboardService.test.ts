@@ -128,6 +128,48 @@ describe('createContentDashboardViewModel', () => {
         });
     });
 
+    it('keeps newest-first ordering after filtering', () => {
+        const items = [
+            {
+                id: 'old-recording',
+                title: 'Old recording',
+                type: 'recording',
+                url: 'https://example.com/old-recording',
+                publishedAt: '2026-01-01',
+                excerpt: 'An older recording.',
+                durationSeconds: null,
+                thumbnailUrl: null,
+            },
+            {
+                id: 'lesson',
+                title: 'A lesson',
+                type: 'lesson',
+                url: 'https://example.com/lesson',
+                publishedAt: '2026-06-30',
+                excerpt: 'A lesson.',
+                durationSeconds: null,
+                thumbnailUrl: null,
+            },
+            {
+                id: 'new-recording',
+                title: 'New recording',
+                type: 'recording',
+                url: 'https://example.com/new-recording',
+                publishedAt: '2026-03-15',
+                excerpt: 'A newer recording.',
+                durationSeconds: null,
+                thumbnailUrl: null,
+            },
+        ] satisfies readonly ContentItem[];
+
+        expect(
+            createContentDashboardViewModel(items, {
+                locale: 'en-US',
+                selectedType: 'recording',
+            }).items.map((item) => item.id),
+        ).toStrictEqual(['new-recording', 'old-recording']);
+    });
+
     it('resets an unavailable selected type to all content', () => {
         const items = [
             {
