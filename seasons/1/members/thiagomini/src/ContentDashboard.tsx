@@ -26,7 +26,7 @@ export function ContentDashboard({ items, locale }: ContentDashboardProps) {
     });
 
     return (
-        <>
+        <div className="flex flex-col gap-6">
             <FormControl>
                 <FormControl.Label>Filter content by type</FormControl.Label>
                 <Select
@@ -44,7 +44,7 @@ export function ContentDashboard({ items, locale }: ContentDashboardProps) {
                 </Select>
             </FormControl>
 
-            <ul className="flex flex-col gap-4">
+            <ul className="m-0 flex list-none flex-col gap-4 p-0">
                 {viewModel.items.map((item) => (
                     <li
                         key={item.id}
@@ -80,6 +80,6 @@ export function ContentDashboard({ items, locale }: ContentDashboardProps) {
                     </li>
                 ))}
             </ul>
-        </>
+        </div>
     );
 }
