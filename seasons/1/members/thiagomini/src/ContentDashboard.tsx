@@ -7,14 +7,11 @@ import {
     Select,
     Text,
 } from '@primer/react';
-import { useEffect, useState } from 'react';
 import {
     createContentDashboardViewModel,
     type ContentItem,
 } from './ContentDashboardService';
-import { useKeyValueStorage } from './KeyValueStorage';
-
-const selectedTypeStorageKey = 'content-library.selected-type';
+import { useSelectedContentType } from './useSelectedContentType';
 
 interface ContentDashboardProps {
     items: readonly ContentItem[];
@@ -22,23 +19,11 @@ interface ContentDashboardProps {
 }
 
 export function ContentDashboard({ items, locale }: ContentDashboardProps) {
-    const storage = useKeyValueStorage();
-    const [selectedType, setSelectedType] = useState<string | null>(
-        () => storage.get(selectedTypeStorageKey) ?? null,
-    );
+    const { selectedType, setSelectedType } = useSelectedContentType(items);
     const viewModel = createContentDashboardViewModel(items, {
         locale,
         selectedType,
     });
-
-    useEffect(() => {
-        if (viewModel.selectedType === null) {
-            storage.delete(selectedTypeStorageKey);
-            return;
-        }
-
-        storage.set(selectedTypeStorageKey, viewModel.selectedType);
-    }, [storage, viewModel.selectedType]);
 
     return (
         <>
