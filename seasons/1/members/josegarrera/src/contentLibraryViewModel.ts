@@ -16,8 +16,19 @@ export type ContentCard = {
     publishedDate: string;
 };
 
-export function presentContentLibrary(records: ContentRecord[]): ContentCard[] {
-    return sortNewestFirst(records).map(
+export type ContentFilter = {
+    type: string | null;
+};
+
+export function presentContentLibrary(
+    records: ContentRecord[],
+    filter?: ContentFilter,
+): ContentCard[] {
+    const matchingRecords = records.filter(
+        (record) => !filter || record.type === filter.type,
+    );
+
+    return sortNewestFirst(matchingRecords).map(
         ({ id, title, type, excerpt, url, publishedAt }) => ({
             id,
             title,

@@ -60,6 +60,24 @@ describe('The content library', () => {
         ]);
     });
 
+    describe('type filter', () => {
+        it('narrows the cards to the selected type', () => {
+            const lesson = aContentRecord({ id: 'c_0001', type: 'lesson' });
+            const recording = aContentRecord({
+                id: 'c_0002',
+                type: 'recording',
+            });
+
+            const cards = presentContentLibrary([lesson, recording], {
+                type: 'recording',
+            });
+
+            expect(cards).toEqual([
+                expect.objectContaining({ id: 'c_0002' }),
+            ]);
+        });
+    });
+
     describe('published date', () => {
         afterEach(() => {
             vi.unstubAllEnvs();
