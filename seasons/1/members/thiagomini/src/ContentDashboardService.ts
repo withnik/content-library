@@ -38,14 +38,16 @@ export function createContentDashboardViewModel(
     const dateFormatter = new Intl.DateTimeFormat(options?.locale, {
         dateStyle: 'medium',
     });
-    const types = [...new Set(items.map((item) => item.type))].toSorted();
-    const selectedType = types.includes(options.selectedType ?? '')
-        ? options.selectedType!
+    const types = getTypesFromItems(items);
+    const selectedType = types.has(options.selectedType ?? '')
+        ? (options.selectedType as string)
         : null;
+
+    const typesAsSortedArray = [...types].toSorted();
 
     return {
         selectedType,
-        types,
+        types: typesAsSortedArray,
         items: items
             .filter(
                 (item) => selectedType === null || item.type === selectedType,
@@ -60,4 +62,12 @@ export function createContentDashboardViewModel(
                 ),
             })),
     };
+}
+
+function getTypesFromItems(items: readonly ContentItem[]): Set<string> {
+    const types = new Set<string>();
+    for (const item of items) {
+        types.add(item.type);
+    }
+    return types;
 }
