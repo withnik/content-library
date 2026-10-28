@@ -10,3 +10,13 @@ export type Content = {
     thumbnailUrl: string | null;
     space: string;
 };
+
+export const FILTER_OPTIONS = [
+    'all',
+    'lesson',
+    'post',
+    'recording',
+    'thread',
+] as const;
+
+export type FilterBy = 'recording' | 'post' | 'lesson' | 'thread' | 'all';
