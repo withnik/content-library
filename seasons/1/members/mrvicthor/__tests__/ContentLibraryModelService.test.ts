@@ -45,7 +45,7 @@ const items = [
 
 describe('content library page model', () => {
     it('returns model with sorted items', () => {
-        const result = createContentLibraryPageModel(items);
+        const result = createContentLibraryPageModel(items, 'all');
         expect(result).toEqual({
             title: result.title,
             items: result.items,
@@ -53,7 +53,23 @@ describe('content library page model', () => {
     });
 
     it('returns empty data when source data is not available', () => {
-        const result = createContentLibraryPageModel([]);
+        const result = createContentLibraryPageModel([], 'all');
+        expect(result).toEqual({
+            title: 'Content Library',
+            items: [],
+        });
+    });
+
+    it('filters items based on the selected filter', () => {
+        const result = createContentLibraryPageModel(items, 'lesson');
+        expect(result).toEqual({
+            title: 'Content Library',
+            items: result.items,
+        });
+    });
+
+    it('returns an empty array if no item matches filter', () => {
+        const result = createContentLibraryPageModel(items, 'thread');
         expect(result).toEqual({
             title: 'Content Library',
             items: [],
