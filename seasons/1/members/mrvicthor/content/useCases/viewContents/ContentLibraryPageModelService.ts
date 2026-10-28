@@ -1,4 +1,4 @@
-import { type Content } from '../../domain/ContentService';
+import { type Content, type FilterBy } from '../../domain/ContentService';
 import { sortByNewest } from '../../../helpers/sortByNewest';
 
 type ContentLibraryPageModel = {
@@ -16,11 +16,18 @@ type ContentLibraryPageModel = {
 
 export function createContentLibraryPageModel(
     items: Content[],
+    filterBy: FilterBy,
 ): ContentLibraryPageModel {
     const pageTitle = 'Content Library';
+    const visibleItems =
+        filterBy === 'all'
+            ? items
+            : items.filter(
+                  (item) => item.type.toLowerCase() === filterBy.toLowerCase(),
+              );
     return {
         title: pageTitle,
-        items: sortByNewest(items).map((item) => ({
+        items: sortByNewest(visibleItems).map((item) => ({
             id: item.id,
             title: item.title,
             excerpt: item.excerpt,
