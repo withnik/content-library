@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
     createContentLibraryViewModel,
+    type ContentItem,
     type Criteria,
 } from '../src/ContentLibraryViewModelService.ts';
-import type { ContentItem } from '../src/ContentLibraryPage.tsx';
 
 describe('content library ViewModel', () => {
     it('returns empty model when source data is unavailable', () => {

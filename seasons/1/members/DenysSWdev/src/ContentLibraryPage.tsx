@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
     ActionList,
     ActionMenu,
@@ -9,46 +8,15 @@ import {
     Stack,
     Text,
 } from '@primer/react';
-import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
-
-export type ContentItem = {
-    id: string;
-    title: string;
-    type: string;
-    media?: string;
-    durationSeconds: number | null;
-    url: string;
-    publishedAt: string;
-    excerpt: string;
-    thumbnailUrl: string | null;
-};
+import type { ContentItem } from './ContentLibraryViewModelService.ts';
+import { useLibraryContent } from './useLibraryContent.ts';
 
 export type ContentLibraryPageProps = {
     items: ContentItem[];
 };
 
 export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
-    const viewModel = createContentLibraryViewModel(items, navigator.language);
-    const [selectedType, setSelectedType] = useState(
-        () => new URLSearchParams(location.search).get('type') ?? '',
-    );
-    const types = [...new Set(items.map((item) => item.type))].sort();
-    const visibleItems = viewModel.items.filter(
-        (item) => !selectedType || item.type === selectedType,
-    );
-
-    const selectType = (type: string) => {
-        setSelectedType(type);
-        const params = new URLSearchParams(location.search);
-        if (type) params.set('type', type);
-        else params.delete('type');
-        const query = params.toString();
-        history.replaceState(
-            null,
-            '',
-            `${location.pathname}${query && `?${query}`}`,
-        );
-    };
+    const viewModel = useLibraryContent(items);
 
     return (
         <main className="flex flex-col gap-4 p-6">
@@ -60,15 +28,15 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
 
             <ActionMenu>
                 <ActionMenu.Button className="self-start">
-                    {selectedType || 'All types'}
+                    {viewModel.selectedType || 'All types'}
                 </ActionMenu.Button>
                 <ActionMenu.Overlay>
                     <ActionList selectionVariant="single">
-                        {['', ...types].map((type) => (
+                        {viewModel.types.map((type) => (
                             <ActionList.Item
                                 key={type}
-                                selected={type === selectedType}
-                                onSelect={() => selectType(type)}
+                                selected={type === viewModel.selectedType}
+                                onSelect={() => viewModel.selectType(type)}
                             >
                                 {type || 'All types'}
                             </ActionList.Item>
@@ -77,7 +45,7 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                 </ActionMenu.Overlay>
             </ActionMenu>
 
-            {visibleItems.map((item) => (
+            {viewModel.items.map((item) => (
                 <ul
                     key={item.id}
                     data-testid={`content-item-${item.id}`}
