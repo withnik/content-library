@@ -1,24 +1,22 @@
-import { Button, Heading, Link, PageHeader, Stack, Text } from '@primer/react';
-import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
-
-export type ContentItem = {
-    id: string;
-    title: string;
-    type: string;
-    media?: string;
-    durationSeconds: number | null;
-    url: string;
-    publishedAt: string;
-    excerpt: string;
-    thumbnailUrl: string | null;
-};
+import {
+    ActionList,
+    ActionMenu,
+    Button,
+    Heading,
+    Link,
+    PageHeader,
+    Stack,
+    Text,
+} from '@primer/react';
+import type { ContentItem } from './ContentLibraryViewModelService.ts';
+import { useLibraryContent } from './useLibraryContent.ts';
 
 export type ContentLibraryPageProps = {
     items: ContentItem[];
 };
 
 export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
-    const viewModel = createContentLibraryViewModel(items, navigator.language);
+    const viewModel = useLibraryContent(items);
 
     return (
         <main className="flex flex-col gap-4 p-6">
@@ -27,6 +25,25 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                     <PageHeader.Title>{viewModel.title}</PageHeader.Title>
                 </PageHeader.TitleArea>
             </PageHeader>
+
+            <ActionMenu>
+                <ActionMenu.Button className="self-start">
+                    {viewModel.selectedType || 'All types'}
+                </ActionMenu.Button>
+                <ActionMenu.Overlay>
+                    <ActionList selectionVariant="single">
+                        {viewModel.types.map((type) => (
+                            <ActionList.Item
+                                key={type}
+                                selected={type === viewModel.selectedType}
+                                onSelect={() => viewModel.selectType(type)}
+                            >
+                                {type || 'All types'}
+                            </ActionList.Item>
+                        ))}
+                    </ActionList>
+                </ActionMenu.Overlay>
+            </ActionMenu>
 
             {viewModel.items.map((item) => (
                 <ul
