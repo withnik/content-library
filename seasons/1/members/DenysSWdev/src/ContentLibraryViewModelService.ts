@@ -1,4 +1,14 @@
-import type { ContentItem } from './ContentLibraryPage';
+export type ContentItem = {
+    id: string;
+    title: string;
+    type: string;
+    media?: string;
+    durationSeconds: number | null;
+    url: string;
+    publishedAt: string;
+    excerpt: string;
+    thumbnailUrl: string | null;
+};
 
 type ContentLibraryViewModel = {
     title: string;

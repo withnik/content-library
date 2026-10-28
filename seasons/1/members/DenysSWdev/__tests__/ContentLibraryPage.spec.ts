@@ -1,5 +1,5 @@
 import { expect, test } from '@withnik/configs/playwright';
-import type { ContentItem } from '../src/ContentLibraryPage';
+import type { ContentItem } from '../src/ContentLibraryViewModelService';
 
 const items: ContentItem[] = [
     {
