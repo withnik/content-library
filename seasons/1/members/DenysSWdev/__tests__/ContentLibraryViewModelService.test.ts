@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { createContentLibraryViewModel } from '../src/ContentLibraryViewModelService.ts';
+import {
+    createContentLibraryViewModel,
+    type Criteria,
+} from '../src/ContentLibraryViewModelService.ts';
 import type { ContentItem } from '../src/ContentLibraryPage.tsx';
 
 describe('content library ViewModel', () => {
@@ -114,7 +117,7 @@ describe('content library ViewModel', () => {
             },
         ];
         const locale = 'en-US';
-        const criteria = { type: 'lesson' };
+        const criteria: Criteria = { type: 'lesson' };
 
         const model = createContentLibraryViewModel(items, locale, criteria);
 
