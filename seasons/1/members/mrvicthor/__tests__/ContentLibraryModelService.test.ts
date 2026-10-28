@@ -59,4 +59,20 @@ describe('content library page model', () => {
             items: [],
         });
     });
+
+    it('filters items based on the selected filter', () => {
+        const result = createContentLibraryPageModel(items, 'lesson');
+        expect(result).toEqual({
+            title: 'Content Library',
+            items: result.items,
+        });
+    });
+
+    it('returns an empty array if no item matches filter', () => {
+        const result = createContentLibraryPageModel(items, 'thread');
+        expect(result).toEqual({
+            title: 'Content Library',
+            items: [],
+        });
+    });
 });
