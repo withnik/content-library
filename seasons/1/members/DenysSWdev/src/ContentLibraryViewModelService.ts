@@ -15,6 +15,8 @@ type ContentLibraryViewModel = {
 export function createContentLibraryViewModel(
     items: ContentItem[],
     locale: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _criteria: { type?: string } = {},
 ): ContentLibraryViewModel {
     const dateFormatter = new Intl.DateTimeFormat(locale, {
         day: 'numeric',
