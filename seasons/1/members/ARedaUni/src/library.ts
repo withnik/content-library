@@ -44,3 +44,11 @@ export const presentLibrary = (
             publishedOn: date.format(new Date(publishedAt)),
         }));
 };
+
+export const filterByType = (
+    items: ContentItem[],
+    type: string
+): ContentItem[] => {
+    const filteredItemsByNewestFirst = items.filter(item => item.type === type).sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+    return filteredItemsByNewestFirst;
+}   

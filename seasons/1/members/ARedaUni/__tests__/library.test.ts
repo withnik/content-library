@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { presentLibrary, type ContentItem } from '../src/library';
+import { filterByType } from '../src/library';
 
 // West of UTC: a date-only ISO string parsed as UTC midnight is the previous
 // day here, so a formatter that ignores that would fail these tests.
@@ -80,4 +81,16 @@ describe('presentLibrary', () => {
 
         expect(entry?.publishedOn).toBe('25 Sept 2026');
     });
+
+    it('filters items by type', () => {
+        const items = [
+            item({id: 'c_0001',  type: 'lesson', publishedAt: '2026-01-01',}), 
+            item({id: 'c_0002',  type: 'soft-skill', publishedAt: '2026-01-01',}),
+            item({id: 'c_0003',  type: 'soft-skill', publishedAt: '2026-01-02',})
+        ]
+
+        const filteredItems = filterByType(items, "soft-skill");
+        expect(filteredItems.length).toEqual(2)
+        expect(filteredItems.map(i => i.id)).toEqual(['c_0003', 'c_0002']);
+    })
 });
