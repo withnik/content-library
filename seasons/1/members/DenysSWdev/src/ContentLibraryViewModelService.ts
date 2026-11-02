@@ -12,6 +12,7 @@ export type ContentItem = {
 
 type ContentLibraryViewModel = {
     title: string;
+    types: string[];
     items: {
         id: string;
         title: string;
@@ -53,6 +54,7 @@ export function createContentLibraryViewModel(
 
     return {
         title: 'Content Library',
+        types: [],
         items: sortNewestFirst(filterItems(items, criteria)).map((item) => ({
             id: item.id,
             title: item.title,
