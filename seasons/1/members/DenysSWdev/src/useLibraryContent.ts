@@ -2,9 +2,15 @@ import { useState } from 'react';
 import {
     createContentLibraryViewModel,
     type ContentItem,
+    type ContentLibraryViewModel,
 } from './ContentLibraryViewModelService.ts';
 
-export function useLibraryContent(items: ContentItem[]) {
+export type LibraryContent = ContentLibraryViewModel & {
+    selectedType: string;
+    selectType: (type: string) => void;
+};
+
+export function useLibraryContent(items: ContentItem[]): LibraryContent {
     const [selectedType, setSelectedType] = useState(
         () => new URLSearchParams(location.search).get('type') ?? '',
     );
