@@ -95,6 +95,32 @@ describe('content library ViewModel', () => {
         expect(model.items.map((item) => item.id)).toEqual(['3', '1']);
     });
 
+    it('returns every item newest first when no type is selected', () => {
+        const items = [
+            buildContentItem({
+                id: '1',
+                type: 'lesson',
+                publishedAt: '2026-05-19',
+            }),
+            buildContentItem({
+                id: '2',
+                type: 'masterclass',
+                publishedAt: '2026-09-29',
+            }),
+            buildContentItem({
+                id: '3',
+                type: 'lesson',
+                publishedAt: '2026-06-24',
+            }),
+        ];
+        const criteria: Criteria = { type: '' };
+
+        const model = createContentLibraryViewModel(items, locale, criteria);
+
+        // Assert: no filtering, newest first
+        expect(model.items.map((item) => item.id)).toEqual(['2', '3', '1']);
+    });
+
     it('returns all-types option followed by distinct sorted types of all items', () => {
         const items = [
             buildContentItem({ id: '1', type: 'masterclass' }),
