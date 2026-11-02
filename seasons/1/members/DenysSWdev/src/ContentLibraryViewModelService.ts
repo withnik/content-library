@@ -10,7 +10,7 @@ export type ContentItem = {
     thumbnailUrl: string | null;
 };
 
-type ContentLibraryViewModel = {
+export type ContentLibraryViewModel = {
     title: string;
     types: string[];
     items: {
