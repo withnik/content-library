@@ -124,4 +124,56 @@ describe('content library ViewModel', () => {
         // Assert: only lessons remain, newest first
         expect(model.items.map((item) => item.id)).toEqual(['3', '1']);
     });
+
+    it('returns all-types option followed by distinct sorted types of all items', () => {
+        const items: ContentItem[] = [
+            {
+                id: '1',
+                title: 'Title 1',
+                type: 'masterclass',
+                durationSeconds: null,
+                url: 'https://xy.z/1',
+                publishedAt: '2026-05-19',
+                excerpt: 'Description 1',
+                thumbnailUrl: null,
+            },
+            {
+                id: '2',
+                title: 'Title 2',
+                type: 'lesson',
+                durationSeconds: null,
+                url: 'https://xy.z/2',
+                publishedAt: '2026-09-29',
+                excerpt: 'Description 2',
+                thumbnailUrl: null,
+            },
+            {
+                id: '3',
+                title: 'Title 3',
+                type: 'lesson',
+                durationSeconds: null,
+                url: 'https://xy.z/3',
+                publishedAt: '2026-06-24',
+                excerpt: 'Description 3',
+                thumbnailUrl: null,
+            },
+            {
+                id: '4',
+                title: 'Title 4',
+                type: 'recording',
+                durationSeconds: null,
+                url: 'https://xy.z/4',
+                publishedAt: '2026-01-15',
+                excerpt: 'Description 4',
+                thumbnailUrl: null,
+            },
+        ];
+        const locale = 'en-US';
+        const criteria: Criteria = { type: 'lesson' };
+
+        const model = createContentLibraryViewModel(items, locale, criteria);
+
+        // Assert: options come from all items, not only the filtered ones
+        expect(model.types).toEqual(['', 'lesson', 'masterclass', 'recording']);
+    });
 });
