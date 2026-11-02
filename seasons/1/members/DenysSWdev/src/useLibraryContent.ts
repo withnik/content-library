@@ -8,7 +8,6 @@ export function useLibraryContent(items: ContentItem[]) {
     const [selectedType, setSelectedType] = useState(
         () => new URLSearchParams(location.search).get('type') ?? '',
     );
-    const types = ['', ...[...new Set(items.map((item) => item.type))].sort()];
     const model = createContentLibraryViewModel(items, navigator.language, {
         type: selectedType,
     });
@@ -26,5 +25,5 @@ export function useLibraryContent(items: ContentItem[]) {
         );
     };
 
-    return { ...model, types, selectedType, selectType };
+    return { ...model, selectedType, selectType };
 }

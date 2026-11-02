@@ -40,6 +40,11 @@ const sortNewestFirst = (items: ContentItem[]) =>
               : 0,
     );
 
+const getTypeOptions = (items: ContentItem[]) => [
+    '',
+    ...new Set(items.map((item) => item.type).sort()),
+];
+
 export function createContentLibraryViewModel(
     items: ContentItem[],
     locale: string,
@@ -54,7 +59,7 @@ export function createContentLibraryViewModel(
 
     return {
         title: 'Content Library',
-        types: [],
+        types: getTypeOptions(items),
         items: sortNewestFirst(filterItems(items, criteria)).map((item) => ({
             id: item.id,
             title: item.title,
