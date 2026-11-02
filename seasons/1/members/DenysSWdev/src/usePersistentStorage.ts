@@ -20,15 +20,22 @@ export function usePersistentStorage(): PersistentStorage {
     return storage;
 }
 
+/**
+ * Reads and writes one key as a plain string. An absent key reads as '' and
+ * writing '' removes the key, so callers never deal with null. The cost: a
+ * missing key can't be told apart from an empty one. Use
+ * usePersistentStorage() directly if that distinction ever matters.
+ */
 export function usePersistentValue(
     key: string,
-): [string | null, (value: string | null) => void] {
+): [string, (value: string) => void] {
     const storage = usePersistentStorage();
-    const value = useSyncExternalStore(storage.subscribe, () =>
-        storage.get(key),
+    const value = useSyncExternalStore(
+        storage.subscribe,
+        () => storage.get(key) ?? '',
     );
     const setValue = useCallback(
-        (next: string | null) => storage.set(key, next),
+        (next: string) => storage.set(key, next),
         [storage, key],
     );
     return [value, setValue];

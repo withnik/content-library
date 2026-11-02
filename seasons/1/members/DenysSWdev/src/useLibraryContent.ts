@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import {
     createContentLibraryViewModel,
     type ContentItem,
     type ContentLibraryViewModel,
 } from './ContentLibraryViewModelService.ts';
+import { usePersistentValue } from './usePersistentStorage.ts';
 
 export type LibraryContent = ContentLibraryViewModel & {
     selectedType: string;
@@ -11,25 +11,10 @@ export type LibraryContent = ContentLibraryViewModel & {
 };
 
 export function useLibraryContent(items: ContentItem[]): LibraryContent {
-    const [selectedType, setSelectedType] = useState(
-        () => new URLSearchParams(location.search).get('type') ?? '',
-    );
+    const [selectedType, selectType] = usePersistentValue('type');
     const model = createContentLibraryViewModel(items, navigator.language, {
         type: selectedType,
     });
-
-    const selectType = (type: string) => {
-        setSelectedType(type);
-        const params = new URLSearchParams(location.search);
-        if (type) params.set('type', type);
-        else params.delete('type');
-        const query = params.toString();
-        history.replaceState(
-            null,
-            '',
-            `${location.pathname}${query && `?${query}`}`,
-        );
-    };
 
     return { ...model, selectedType, selectType };
 }
