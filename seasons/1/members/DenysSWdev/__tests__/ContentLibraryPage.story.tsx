@@ -2,8 +2,10 @@ import {
     ContentLibraryPage,
     type ContentLibraryPageProps,
 } from '../src/ContentLibraryPage';
-import { createUrlStorage } from '../src/PersistentStorage.ts';
-import { PersistentStorageProvider } from '../src/PersistentStorageProvider.tsx';
+import {
+    createUrlStorage,
+    PersistentStorageProvider,
+} from '../src/persistentStorage/index.ts';
 
 const urlStorage = createUrlStorage();
 

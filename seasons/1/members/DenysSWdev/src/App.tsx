@@ -1,7 +1,9 @@
 import content from '../../../data/content.json';
 import { ContentLibraryPage } from './ContentLibraryPage';
-import { createUrlStorage } from './PersistentStorage.ts';
-import { PersistentStorageProvider } from './PersistentStorageProvider.tsx';
+import {
+    createUrlStorage,
+    PersistentStorageProvider,
+} from './persistentStorage/index.ts';
 
 const storage = createUrlStorage();
 

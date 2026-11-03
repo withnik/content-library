@@ -3,7 +3,7 @@ import {
     type ContentItem,
     type ContentLibraryViewModel,
 } from './ContentLibraryViewModelService.ts';
-import { usePersistentValue } from './usePersistentStorage.ts';
+import { usePersistentValue } from './persistentStorage/index.ts';
 
 export type LibraryContent = ContentLibraryViewModel & {
     selectedType: string;
