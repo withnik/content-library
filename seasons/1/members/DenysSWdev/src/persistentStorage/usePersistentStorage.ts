@@ -14,7 +14,7 @@ export function usePersistentStorage(): PersistentStorage {
     const storage = useContext(PersistentStorageContext);
     if (!storage) {
         throw new Error(
-            'usePersistentStorage must be used inside PersistentStorageProvider',
+            'usePersistentStorage must be used inside PersistentStorageContext',
         );
     }
     return storage;

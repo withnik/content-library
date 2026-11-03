@@ -4,13 +4,13 @@ import {
 } from '../src/ContentLibraryPage';
 import {
     createUrlStorage,
-    PersistentStorageProvider,
+    PersistentStorageContext,
 } from '../src/persistentStorage/index.ts';
 
 const urlStorage = createUrlStorage();
 
 export const Default = (props: ContentLibraryPageProps) => (
-    <PersistentStorageProvider storage={urlStorage}>
+    <PersistentStorageContext value={urlStorage}>
         <ContentLibraryPage {...props} />
-    </PersistentStorageProvider>
+    </PersistentStorageContext>
 );
