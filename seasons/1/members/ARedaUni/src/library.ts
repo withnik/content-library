@@ -47,8 +47,10 @@ export const presentLibrary = (
 
 export const filterByType = (
     items: ContentItem[],
-    type: string
+    type: string,
 ): ContentItem[] => {
-    const filteredItemsByNewestFirst = items.filter(item => item.type === type).sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+    const filteredItemsByNewestFirst = items
+        .filter((item) => item.type === type)
+        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
     return filteredItemsByNewestFirst;
-}   
+};

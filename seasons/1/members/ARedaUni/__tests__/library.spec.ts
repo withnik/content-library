@@ -1,81 +1,77 @@
-// Integration tests for filtering feature via ViewModel
+// Integration tests for the type filter. Everything is found the way a user
+// finds it: by role and accessible name, never by tag or CSS selector.
 import { expect, test } from '@withnik/configs/playwright';
 import content from '../../../data/content.json' with { type: 'json' };
 
 test.use({ locale: 'en-US', timezoneId: 'America/Los_Angeles' });
 
-test('filter dropdown shows all available types', async ({ mount }) => {
+const types = [...new Set(content.items.map((item) => item.type))];
+const type = types[0]!;
+const ofType = content.items.filter((item) => item.type === type);
+
+test('lists every type in the data, plus "All types"', async ({ mount }) => {
     const app = await mount('App/Default');
 
-    const filterSelect = app.locator('select#type-filter');
-    await expect(filterSelect).toBeVisible();
+    const filter = app.getByRole('combobox', { name: 'Type' });
 
-    // Check for "all" option
-    await expect(filterSelect.locator('option[value="all"]')).toContainText('All types');
-
-    // Check that types from data appear
-    const options = filterSelect.locator('option');
-    const optionTexts = await options.allTextContents();
-    expect(optionTexts).toContain('All types');
-    expect(optionTexts.length).toBeGreaterThan(1);
+    await expect(filter.getByRole('option')).toHaveText([
+        'All types',
+        ...types,
+    ]);
 });
 
-test('filtering by type shows only that type, newest first', async ({ mount }) => {
+test('shows only the chosen type, newest first', async ({ mount }) => {
     const app = await mount('App/Default');
 
-    const filterSelect = app.locator('select#type-filter');
-    const firstType = content.items[0]?.type;
-    if (!firstType) return;
+    await app.getByRole('combobox', { name: 'Type' }).selectOption(type);
 
-    // Select first type
-    await filterSelect.selectOption(firstType);
-
-    // Wait for filtered list
-    const listItems = app.getByRole('listitem');
-    const visibleItems = await listItems.all();
-
-    // Check: only selected type is shown
-    for (const item of visibleItems) {
-        await expect(item).toContainText(firstType);
-    }
-
-    // Check: newest-first order is preserved
-    const dates = await listItems
+    const listed = app.getByRole('listitem');
+    await expect(listed).toHaveCount(ofType.length);
+    await expect(listed.getByText(type, { exact: true })).toHaveCount(
+        ofType.length,
+    );
+    const dates = await listed
         .locator('time')
         .evaluateAll((times) => times.map((t) => t.getAttribute('datetime')));
     expect(dates).toEqual([...dates].sort().reverse());
 });
 
-test('filter defaults to "all" on first load', async ({ mount, page }) => {
-    // Clear localStorage to simulate first load
-    await page.evaluate(() => {
-        localStorage.clear();
-    });
-
+test('goes back to everything when "All types" is chosen', async ({
+    mount,
+}) => {
     const app = await mount('App/Default');
+    const filter = app.getByRole('combobox', { name: 'Type' });
 
-    const filterSelect = app.locator('select#type-filter');
-    await expect(filterSelect).toHaveValue('all');
+    await filter.selectOption(type);
+    await filter.selectOption('All types');
 
-    // Verify all items are shown
-    const listItems = app.getByRole('listitem');
-    await expect(listItems).toHaveCount(content.items.length);
+    await expect(app.getByRole('listitem')).toHaveCount(content.items.length);
 });
 
-test('filter selection persists across reloads', async ({ mount, page }) => {
+test('starts on "All types"', async ({ mount, page }) => {
+    // The context is reused between tests, so an earlier choice may linger.
+    await mount('App/Default');
+    await page.evaluate(() => localStorage.clear());
+
     const app = await mount('App/Default');
-    const firstType = content.items[0]?.type;
-    if (!firstType) return;
 
-    // Select a type
-    const filterSelect = app.locator('select#type-filter');
-    await filterSelect.selectOption(firstType);
-    await expect(filterSelect).toHaveValue(firstType);
+    await expect(app.getByRole('combobox', { name: 'Type' })).toHaveValue(
+        'all',
+    );
+    await expect(app.getByRole('listitem')).toHaveCount(content.items.length);
+});
 
-    // Reload the page
-    await page.reload();
+test('remembers the choice when the page is opened again', async ({
+    mount,
+}) => {
+    const first = await mount('App/Default');
+    await first.getByRole('combobox', { name: 'Type' }).selectOption(type);
+    await first.unmount();
 
-    // Verify filter is still set (localStorage persisted)
-    const reloadedSelect = app.locator('select#type-filter');
-    await expect(reloadedSelect).toHaveValue(firstType);
+    const again = await mount('App/Default');
+
+    await expect(again.getByRole('combobox', { name: 'Type' })).toHaveValue(
+        type,
+    );
+    await expect(again.getByRole('listitem')).toHaveCount(ofType.length);
 });

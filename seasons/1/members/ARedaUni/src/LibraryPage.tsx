@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { Heading, Label, Link, LinkButton, Text } from '@primer/react';
+import {
+    FormControl,
+    Heading,
+    Label,
+    Link,
+    LinkButton,
+    Select,
+    Text,
+} from '@primer/react';
 import { createContentLibraryViewModel } from './libraryviewmodel';
 import type { ContentItem } from './library';
 
@@ -34,22 +42,20 @@ export function LibraryPage({ items, locale }: Props) {
         <main className="flex flex-col gap-4 p-6">
             <Heading as="h1">{vm.title}</Heading>
 
-            <div className="my-2">
-                <label htmlFor="type-filter">Filter by type:</label>
-                <select
-                    id="type-filter"
+            <FormControl>
+                <FormControl.Label>Type</FormControl.Label>
+                <Select
                     value={selectedType}
                     onChange={(e) => handleTypeChange(e.currentTarget.value)}
-                    className="rounded border border-gray-300 px-3 py-2"
                 >
-                    <option value="all">All types</option>
+                    <Select.Option value="all">All types</Select.Option>
                     {vm.availableTypes.map((type) => (
-                        <option key={type} value={type}>
+                        <Select.Option key={type} value={type}>
                             {type}
-                        </option>
+                        </Select.Option>
                     ))}
-                </select>
-            </div>
+                </Select>
+            </FormControl>
 
             <ul className="flex flex-col gap-6">
                 {vm.items.map((entry) => (

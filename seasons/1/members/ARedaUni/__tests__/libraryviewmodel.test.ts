@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createContentLibraryViewModel, type ContentLibraryViewModel } from '../src/libraryviewmodel';
+import { createContentLibraryViewModel } from '../src/libraryviewmodel';
 import type { ContentItem } from '../src/library';
 
 // West of UTC: a date-only ISO string parsed as UTC midnight is the previous
@@ -8,7 +8,7 @@ beforeAll(() => {
     process.env.TZ = 'America/Los_Angeles';
 });
 
-const item = (overrides: Partial<ContentItem>): ContentItem => ({
+const item = (overrides: Partial<ContentItem> = {}): ContentItem => ({
     id: 'c_0001',
     title: 'A title',
     type: 'lesson',
@@ -32,19 +32,27 @@ describe('ContentLibraryViewModel', () => {
 
         const vm = createContentLibraryViewModel(items, inUS);
 
-        expect(vm.items.map(i => i.id)).toEqual(['new', 'mid', 'old']);
+        expect(vm.items.map((i) => i.id)).toEqual(['new', 'mid', 'old']);
     });
 
     it('filters items by selected type and keeps newest-first order', () => {
         const items = [
             item({ id: 'c_0001', type: 'lesson', publishedAt: '2026-01-01' }),
-            item({ id: 'c_0002', type: 'soft-skill', publishedAt: '2026-01-01' }),
-            item({ id: 'c_0003', type: 'soft-skill', publishedAt: '2026-01-02' }),
+            item({
+                id: 'c_0002',
+                type: 'soft-skill',
+                publishedAt: '2026-01-01',
+            }),
+            item({
+                id: 'c_0003',
+                type: 'soft-skill',
+                publishedAt: '2026-01-02',
+            }),
         ];
 
         const vm = createContentLibraryViewModel(items, inUS, 'soft-skill');
 
-        expect(vm.items.map(i => i.id)).toEqual(['c_0003', 'c_0002']);
+        expect(vm.items.map((i) => i.id)).toEqual(['c_0003', 'c_0002']);
     });
 
     it('includes all available types in the view model', () => {
