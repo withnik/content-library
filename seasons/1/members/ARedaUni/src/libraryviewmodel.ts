@@ -14,14 +14,17 @@ export function createContentLibraryViewModel(
     selectedType: string = 'all',
 ): ContentLibraryViewModel {
     const itemsArray = Array.from(items);
-    const filtered =
-        selectedType === 'all'
-            ? itemsArray
-            : filterByType(itemsArray, selectedType);
+
+    const showEverything = selectedType === 'all';
+    const filtered = showEverything
+        ? itemsArray
+        : filterByType(itemsArray, selectedType);
 
     const formattedItems = presentLibrary(filtered, { locale });
 
-    const availableTypes = [...new Set(itemsArray.map((item) => item.type))];
+    // Types come from ALL items, so choosing one never hides the others.
+    const everyType = itemsArray.map((item) => item.type);
+    const availableTypes = [...new Set(everyType)];
 
     return {
         title: 'Content Library',
