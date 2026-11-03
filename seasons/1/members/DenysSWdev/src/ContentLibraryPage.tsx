@@ -45,13 +45,12 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                 </ActionMenu.Overlay>
             </ActionMenu>
 
-            {viewModel.items.map((item) => (
-                <ul
-                    key={item.id}
-                    data-testid={`content-item-${item.id}`}
-                    className="rounded-md border border-gray-300 p-4"
-                >
-                    <li>
+            <ul role="list" className="m-0 flex list-none flex-col gap-4 p-0">
+                {viewModel.items.map((item) => (
+                    <li
+                        key={item.id}
+                        className="rounded-md border border-gray-300 p-4"
+                    >
                         <Stack direction="vertical" gap="condensed">
                             <Stack
                                 direction="horizontal"
@@ -83,8 +82,8 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                             <Text as="p">{item.excerpt}</Text>
                         </Stack>
                     </li>
-                </ul>
-            ))}
+                ))}
+            </ul>
         </main>
     );
 }
