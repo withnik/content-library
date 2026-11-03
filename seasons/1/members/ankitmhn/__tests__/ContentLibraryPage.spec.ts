@@ -39,13 +39,21 @@ test('see content library with item linking to their original source', async ({
 
     const page = await mount('ContentLibraryPage/Default', {
         props: { items },
+        path: '/?type=lesson', // add the query param to the path
     });
 
     const pageTitle = page.getByRole('heading', { name: 'Content Library' });
     await expect(pageTitle).toBeVisible();
 
     const cards = page.getByRole('listitem');
-    await expect(cards).toHaveCount(2);
+    await expect(cards).toHaveCount(1);
+    await expect(page.page()).toHaveURL(
+        (url) => url.searchParams.get('type') === 'lesson',
+    );
+
+    // todo: select "all" filter option -> all items are shown
+    await page.getByRole('button', { name: 'lesson' }).click();
+    await page.getByRole('menuitemradio', { name: 'All' }).click();
 
     const firstCard = cards.first();
     const firstCardTitle = firstCard.getByRole('heading', {
@@ -65,6 +73,10 @@ test('see content library with item linking to their original source', async ({
         context.waitForEvent('page'),
         firstCard.getByRole('button').click(),
     ]);
+    // todo: add test for filtering by type
+    // clicking on the filter button -> filter options are shown
+    // selecting one of the filter options -> only items of that type are shown
+
     await expect(tabFromButtonClick).toHaveURL('https://xy.z/battle-tactics');
     await tabFromButtonClick.close();
 });
