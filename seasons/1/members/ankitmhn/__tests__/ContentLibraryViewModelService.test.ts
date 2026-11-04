@@ -80,7 +80,7 @@ describe('content library ViewModel', () => {
         ]);
     });
 
-    it('returns list of filter options', () => {
+    it('returns model with filtered items', () => {
         const items = [
             {
                 id: '1',
@@ -123,45 +123,6 @@ describe('content library ViewModel', () => {
 
         const model = createContentLibraryViewModel(items, locale, filterValue);
 
-        expect(model.filterOptions).toEqual([
-            'lesson',
-            'masterclass',
-            'soft-skill',
-        ]);
-    });
-
-    it('returns model with filtered items', () => {
-        const filterValue = 'lesson';
-
-        const items = [
-            {
-                id: '1',
-                title: 'Title 1',
-                type: 'lesson',
-                media: 'article',
-                durationSeconds: null,
-                url: 'https://xy.z/1',
-                publishedAt: '2026-05-19',
-                excerpt: 'Description 1',
-                thumbnailUrl: null,
-            },
-            {
-                id: '2',
-                title: 'Title 2',
-                type: 'masterclass',
-                media: 'article',
-                durationSeconds: null,
-                url: 'https://xy.z/2',
-                publishedAt: '2026-09-29',
-                excerpt: 'Description 2',
-                thumbnailUrl: null,
-            },
-        ] as const satisfies ContentItem[];
-
-        const locale = 'en-US';
-
-        const model = createContentLibraryViewModel(items, locale, filterValue);
-
         expect(model.items).toEqual([
             {
                 id: '1',
@@ -171,6 +132,11 @@ describe('content library ViewModel', () => {
                 date: 'May 19, 2026',
                 excerpt: 'Description 1',
             },
+        ]);
+        expect(model.filterOptions).toEqual([
+            'lesson',
+            'masterclass',
+            'soft-skill',
         ]);
     });
 });
