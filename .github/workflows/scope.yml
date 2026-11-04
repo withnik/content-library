@@ -1,0 +1,54 @@
+name: Scope
+
+# Guardrail, not a test: fails a member PR that reaches outside its own
+# directory, unless the maintainer has labelled it `shared-change`.
+#
+# pull_request_target runs this workflow and the script from the base branch,
+# never from the PR, so a member with write access cannot edit the check that
+# judges their own PR. The PR's commits are fetched only to diff them —
+# nothing from the PR is executed. Keep it that way: never check out or run
+# the PR head here.
+#
+# Its own workflow (not a job in CI) so that adding or removing a label re-runs
+# only this check, not the whole test suite.
+on:
+    pull_request_target:
+        types: [opened, synchronize, reopened, labeled, unlabeled]
+    merge_group:
+
+concurrency:
+    group: scope-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+    issues: write # remove a label someone else added
+    pull-requests: write # comment on why it was removed
+
+jobs:
+    scope:
+        runs-on: ubuntu-latest
+        steps:
+            # A required check must report on the merge queue too. Every PR
+            # in the queue already passed it, so there is nothing to re-check.
+            - if: github.event_name == 'merge_group'
+              run: echo "Scope was checked on the pull request."
+
+            - if: github.event_name == 'pull_request_target'
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - if: github.event_name == 'pull_request_target'
+              run: git fetch --no-tags origin "pull/${PR_NUMBER}/head:pr-head"
+              env:
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+
+            - if: github.event_name == 'pull_request_target'
+              run: node scripts/check-scope.mjs "origin/${BASE_REF}" pr-head
+              env:
+                  BASE_REF: ${{ github.base_ref }}
+                  GH_TOKEN: ${{ github.token }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+                  PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+                  PR_LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}

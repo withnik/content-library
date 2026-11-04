@@ -43,19 +43,6 @@ jobs:
             - id: detect
               run: node scripts/changed-apps.mjs '${{ steps.base.outputs.ref }}'
 
-    # Guardrail, not a test: fails a member PR that reaches outside its own
-    # directory. CODEOWNERS routes reviews but enforces nothing.
-    scope:
-        if: github.event_name == 'pull_request'
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-            - run: node scripts/check-scope.mjs origin/${{ github.base_ref }}
-              env:
-                  PR_AUTHOR: ${{ github.event.pull_request.user.login }}
-
     # One job, three gates. Every step runs even when an earlier one failed, so
     # a PR gets its formatting, lint and type errors in a single report instead
     # of one per push. All three are repo-wide — Prettier walks every file,
@@ -160,15 +147,15 @@ jobs:
     # Branch protection can only require checks by name, but the per-app jobs
     # are a matrix whose names depend on which apps changed — there is no fixed
     # name to require. This gate collapses every job into one status: make `ci`
-    # the single required check and nothing merges while anything is red.
+    # a required check and nothing merges while anything is red. The scope
+    # guardrail lives in scope.yml and is required separately as `scope`.
     ci:
         if: always()
-        needs: [changes, scope, quality, unit, build, integration]
+        needs: [changes, quality, unit, build, integration]
         runs-on: ubuntu-latest
         steps:
-            # "skipped" is a legitimate outcome: `scope` only runs on pull
-            # requests, and the per-app jobs sit out a change that touched no
-            # app. A job skipped because its own dependency failed is still
+            # "skipped" is a legitimate outcome: the per-app jobs sit out a
+            # change that touched no app. A job skipped because its own dependency failed is still
             # caught, because that dependency reports "failure".
             - name: Verify every job passed
               env:
