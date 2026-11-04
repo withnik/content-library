@@ -72,7 +72,6 @@ test('see content library with item linking to their original source', async ({
         context.waitForEvent('page'),
         firstCard.getByRole('button').click(),
     ]);
-
     await expect(tabFromButtonClick).toHaveURL('https://xy.z/battle-tactics');
     await tabFromButtonClick.close();
 });

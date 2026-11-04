@@ -118,7 +118,6 @@ describe('content library ViewModel', () => {
         ] as const satisfies ContentItem[];
 
         const filterValue = 'lesson';
-
         const locale = 'en-US';
 
         const model = createContentLibraryViewModel(items, locale, filterValue);

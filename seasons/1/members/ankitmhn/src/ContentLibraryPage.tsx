@@ -28,9 +28,7 @@ export type ContentLibraryPageProps = {
 };
 
 export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
-
     const [filterValue, setFilterValue] = useQueryParam('type');
-
     const viewModel = createContentLibraryViewModel(items, navigator.language, filterValue);
 
     return (
