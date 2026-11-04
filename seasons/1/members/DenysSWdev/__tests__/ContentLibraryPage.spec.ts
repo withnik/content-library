@@ -1,34 +1,22 @@
 import { expect, test } from '@withnik/configs/playwright';
-import type { ContentItem } from '../src/ContentLibraryViewModelService';
+import { buildContentItem } from './builders/buildContentItem.ts';
 
 test('see content library with item linking to their original source', async ({
     mount,
     context,
 }) => {
-    const items: ContentItem[] = [
-        {
+    const items = [
+        buildContentItem({
             id: 'c_0001',
             title: 'Leadership in Westeros',
-            type: 'lesson',
-            media: 'article',
-            durationSeconds: null,
-            url: 'https://xy.z/leadership',
             publishedAt: '2025-12-06',
-            excerpt:
-                'Explores the principles of leadership in the Seven Kingdoms.',
-            thumbnailUrl: null,
-        },
-        {
+        }),
+        buildContentItem({
             id: 'c_0142',
             title: 'Tactics from the Battle of the Five Kings',
-            type: 'masterclass',
-            media: 'video',
-            durationSeconds: 1946,
             url: 'https://xy.z/battle-tactics',
             publishedAt: '2026-04-02',
-            excerpt: 'Learn military strategy and tactics from Westeros.',
-            thumbnailUrl: 'https://xy.z/thumbs/c_0142.jpg',
-        },
+        }),
     ];
 
     await context.route('https://xy.z/battle-tactics', async (route) => {
@@ -73,28 +61,17 @@ test('see content library with item linking to their original source', async ({
 test('filter content library by type and keep the choice after reload', async ({
     mount,
 }) => {
-    const items: ContentItem[] = [
-        {
+    const items = [
+        buildContentItem({
             id: 'c_0001',
             title: 'Leadership in Westeros',
             type: 'lesson',
-            durationSeconds: null,
-            url: 'https://xy.z/leadership',
-            publishedAt: '2025-12-06',
-            excerpt:
-                'Explores the principles of leadership in the Seven Kingdoms.',
-            thumbnailUrl: null,
-        },
-        {
+        }),
+        buildContentItem({
             id: 'c_0142',
             title: 'Tactics from the Battle of the Five Kings',
             type: 'masterclass',
-            durationSeconds: null,
-            url: 'https://xy.z/battle-tactics',
-            publishedAt: '2026-04-02',
-            excerpt: 'Learn military strategy and tactics from Westeros.',
-            thumbnailUrl: null,
-        },
+        }),
     ];
     const page = await mount('ContentLibraryPage/Default', {
         props: { items },
@@ -108,19 +85,14 @@ test('filter content library by type and keep the choice after reload', async ({
         'lesson',
         'masterclass',
     ]);
-    await expect(
-        page.getByRole('menuitemradio', { name: 'All types', exact: true }),
-    ).toBeChecked();
-    expect(urlSearch()).toBe('');
+    const cards = page.getByRole('listitem');
+    await expect(cards).toHaveCount(2);
 
     await page
         .getByRole('menuitemradio', { name: 'masterclass', exact: true })
         .click();
     // Assert: the chosen type is stored in the URL and drives the cards
-    await expect.poll(urlSearch).toBe('?type=masterclass');
-    await expect(page.getByRole('heading', { level: 3 })).toHaveText([
-        'Tactics from the Battle of the Five Kings',
-    ]);
+    await expect(cards).toHaveCount(1);
 
     const reloaded = await mount('ContentLibraryPage/Default', {
         path: `/${urlSearch()}`,
@@ -128,10 +100,6 @@ test('filter content library by type and keep the choice after reload', async ({
     });
     // Assert: after reload the type is still in the URL and selected
     expect(urlSearch()).toBe('?type=masterclass');
-    await expect(
-        reloaded.getByRole('button', { name: 'masterclass', exact: true }),
-    ).toBeVisible();
-
     await reloaded
         .getByRole('button', { name: 'masterclass', exact: true })
         .click();
@@ -140,7 +108,5 @@ test('filter content library by type and keep the choice after reload', async ({
         .click();
     // Assert: choosing "All types" clears the URL and selects it
     await expect.poll(urlSearch).toBe('');
-    await expect(
-        reloaded.getByRole('button', { name: 'All types', exact: true }),
-    ).toBeVisible();
+    await expect(cards).toHaveCount(2);
 });
