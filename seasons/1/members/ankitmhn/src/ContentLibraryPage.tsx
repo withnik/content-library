@@ -1,5 +1,15 @@
-import { Button, Heading, Link, PageHeader, Stack, Text } from '@primer/react';
+import {
+    ActionList,
+    ActionMenu,
+    Button,
+    Heading,
+    Link,
+    PageHeader,
+    Stack,
+    Text,
+} from '@primer/react';
 import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
+import { useQueryParam } from './useQueryParam.ts';
 
 export type ContentItem = {
     id: string;
@@ -18,7 +28,12 @@ export type ContentLibraryPageProps = {
 };
 
 export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
-    const viewModel = createContentLibraryViewModel(items, navigator.language);
+    const [filterValue, setFilterValue] = useQueryParam('type');
+    const viewModel = createContentLibraryViewModel(
+        items,
+        navigator.language,
+        filterValue,
+    );
 
     return (
         <main className="flex flex-col gap-4 p-6">
@@ -27,6 +42,29 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                     <PageHeader.Title>{viewModel.title}</PageHeader.Title>
                 </PageHeader.TitleArea>
             </PageHeader>
+
+            <ActionMenu>
+                <ActionMenu.Button>{filterValue ?? 'All'}</ActionMenu.Button>
+                <ActionMenu.Overlay>
+                    <ActionList selectionVariant="single">
+                        <ActionList.Item
+                            selected={filterValue === null}
+                            onSelect={() => setFilterValue(null)}
+                        >
+                            All
+                        </ActionList.Item>
+                        {viewModel.filterOptions.map((option) => (
+                            <ActionList.Item
+                                key={option}
+                                selected={filterValue === option}
+                                onSelect={() => setFilterValue(option)}
+                            >
+                                {option}
+                            </ActionList.Item>
+                        ))}
+                    </ActionList>
+                </ActionMenu.Overlay>
+            </ActionMenu>
 
             <ul role="list" className="m-0 flex list-none flex-col gap-4 p-0">
                 {viewModel.items.map((item) => (

@@ -10,11 +10,13 @@ type ContentLibraryViewModel = {
         url: string;
         date: string;
     }[];
+    filterOptions: string[];
 };
 
 export function createContentLibraryViewModel(
     items: ContentItem[],
     locale: string,
+    filterValue?: string | null,
 ): ContentLibraryViewModel {
     const dateFormatter = new Intl.DateTimeFormat(locale, {
         day: 'numeric',
@@ -25,6 +27,7 @@ export function createContentLibraryViewModel(
 
     return {
         title: 'Content Library',
+        filterOptions: [...new Set(items.map((item) => item.type))],
         items: [...items]
             .sort((a, b) =>
                 b.publishedAt < a.publishedAt
@@ -33,6 +36,7 @@ export function createContentLibraryViewModel(
                       ? 1
                       : 0,
             )
+            .filter((item) => (filterValue ? item.type === filterValue : true))
             .map((item) => ({
                 id: item.id,
                 title: item.title,
