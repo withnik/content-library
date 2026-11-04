@@ -1,27 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
     createContentLibraryViewModel,
-    type ContentItem,
     type Criteria,
 } from '../src/ContentLibraryViewModelService.ts';
+import { buildContentItem } from './builders/buildContentItem.ts';
 
 const locale = 'en-US';
-
-// Only what a test sets matters; the rest is derived from the id.
-const buildContentItem = ({
-    id = '1',
-    ...overrides
-}: Partial<ContentItem> = {}): ContentItem => ({
-    id,
-    title: `Title ${id}`,
-    type: 'lesson',
-    durationSeconds: null,
-    url: `https://xy.z/${id}`,
-    publishedAt: '2026-01-01',
-    excerpt: `Description ${id}`,
-    thumbnailUrl: null,
-    ...overrides,
-});
 
 describe('content library ViewModel', () => {
     it('returns empty model when source data is unavailable', () => {
