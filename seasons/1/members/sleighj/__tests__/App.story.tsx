@@ -15,6 +15,18 @@ const stubItems: ContentItem[] = [
         thumbnailUrl: null,
     },
     {
+        id: 'middle',
+        title: 'Middle lesson',
+        type: 'lesson',
+        url: 'https://example.com/middle',
+        publishedAt: '2026-06-01',
+        author: 'Ada',
+        space: 'Test',
+        excerpt: 'Middle excerpt',
+        durationSeconds: null,
+        thumbnailUrl: null,
+    },
+    {
         id: 'new',
         title: 'Newer item',
         type: 'recording',
