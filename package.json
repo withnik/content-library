@@ -13,6 +13,7 @@
     ],
     "scripts": {
         "new-member": "node scripts/new-member.mjs",
+        "remove-member": "node scripts/remove-member.mjs",
         "typecheck": "tsc --noEmit -p configs && npm run typecheck --workspaces --if-present",
         "lint": "eslint --report-unused-disable-directives",
         "lint:fix": "eslint --report-unused-disable-directives --fix",
