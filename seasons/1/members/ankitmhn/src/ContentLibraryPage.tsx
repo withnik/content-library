@@ -68,7 +68,6 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                 {viewModel.items.map((item) => (
                     <li
                         key={item.id}
-                        data-testid={`content-item-${item.id}`}
                         className="rounded-md border border-gray-300 p-4"
                     >
                         <Stack direction="vertical" gap="condensed">
