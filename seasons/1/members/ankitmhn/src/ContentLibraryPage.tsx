@@ -8,38 +8,8 @@ import {
     Stack,
     Text,
 } from '@primer/react';
-import { useSyncExternalStore } from 'react';
 import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
-
-const TYPE_PARAM = 'type';
-const typeParamListeners = new Set<() => void>();
-
-function subscribeToTypeParam(onStoreChange: () => void) {
-    typeParamListeners.add(onStoreChange);
-    window.addEventListener('popstate', onStoreChange);
-    return () => {
-        typeParamListeners.delete(onStoreChange);
-        window.removeEventListener('popstate', onStoreChange);
-    };
-}
-
-function getTypeParam() {
-    return new URLSearchParams(window.location.search).get(TYPE_PARAM);
-}
-
-function setTypeParam(nextFilter: string | null) {
-    const params = new URLSearchParams(window.location.search);
-    if (nextFilter) {
-        params.set(TYPE_PARAM, nextFilter);
-    } else {
-        params.delete(TYPE_PARAM);
-    }
-    const search = params.toString();
-    window.history.pushState(null, '', search ? `/?${search}` : '/');
-    for (const listener of typeParamListeners) {
-        listener();
-    }
-}
+import { useQueryParam } from './useQueryParam.ts';
 
 export type ContentItem = {
     id: string;
@@ -59,10 +29,7 @@ export type ContentLibraryPageProps = {
 
 export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
 
-    const filterValue = useSyncExternalStore(
-        subscribeToTypeParam,
-        getTypeParam,
-    );
+    const [filterValue, setFilterValue] = useQueryParam('type');
 
     const viewModel = createContentLibraryViewModel(items, navigator.language, filterValue);
 
@@ -80,7 +47,7 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                     <ActionList selectionVariant="single">
                         <ActionList.Item
                             selected={filterValue === null}
-                            onSelect={() => setTypeParam(null)}
+                            onSelect={() => setFilterValue(null)}
                         >
                             All
                         </ActionList.Item>
@@ -88,7 +55,7 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                             <ActionList.Item
                                 key={option}
                                 selected={filterValue === option}
-                                onSelect={() => setTypeParam(option)}
+                                onSelect={() => setFilterValue(option)}
                             >
                                 {option}
                             </ActionList.Item>
