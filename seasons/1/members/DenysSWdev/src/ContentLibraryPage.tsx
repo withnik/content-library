@@ -28,17 +28,21 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
 
             <ActionMenu>
                 <ActionMenu.Button className="self-start">
-                    {viewModel.selectedType || 'All types'}
+                    {viewModel.selectedTypeLabel}
                 </ActionMenu.Button>
                 <ActionMenu.Overlay>
                     <ActionList selectionVariant="single">
-                        {viewModel.types.map((type) => (
+                        {viewModel.types.map((typeOption) => (
                             <ActionList.Item
-                                key={type}
-                                selected={type === viewModel.selectedType}
-                                onSelect={() => viewModel.selectType(type)}
+                                key={typeOption.value}
+                                selected={
+                                    typeOption.value === viewModel.selectedType
+                                }
+                                onSelect={() =>
+                                    viewModel.selectType(typeOption.value)
+                                }
                             >
-                                {type || 'All types'}
+                                {typeOption.label}
                             </ActionList.Item>
                         ))}
                     </ActionList>

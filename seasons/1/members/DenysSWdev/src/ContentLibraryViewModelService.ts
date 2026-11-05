@@ -10,9 +10,17 @@ export type ContentItem = {
     thumbnailUrl: string | null;
 };
 
+/** No type filter. Matches how storage reads an absent key: as ''. */
+export const ALL_TYPES = '';
+
+const ALL_TYPES_LABEL = 'All types';
+
+export type TypeOption = { value: string; label: string };
+
 export type ContentLibraryViewModel = {
     title: string;
-    types: string[];
+    types: TypeOption[];
+    selectedTypeLabel: string;
     items: {
         id: string;
         title: string;
@@ -40,9 +48,11 @@ const sortNewestFirst = (items: ContentItem[]) =>
               : 0,
     );
 
-const getTypeOptions = (items: ContentItem[]) => [
-    '',
-    ...new Set(items.map((item) => item.type).sort()),
+const getTypeOptions = (items: ContentItem[]): TypeOption[] => [
+    { value: ALL_TYPES, label: ALL_TYPES_LABEL },
+    ...[...new Set(items.map((item) => item.type))]
+        .sort()
+        .map((type) => ({ value: type, label: type })),
 ];
 
 export function createContentLibraryViewModel(
@@ -60,6 +70,7 @@ export function createContentLibraryViewModel(
     return {
         title: 'Content Library',
         types: getTypeOptions(items),
+        selectedTypeLabel: criteria.type || ALL_TYPES_LABEL,
         items: sortNewestFirst(filterItems(items, criteria)).map((item) => ({
             id: item.id,
             title: item.title,
