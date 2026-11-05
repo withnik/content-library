@@ -48,12 +48,14 @@ const sortNewestFirst = (items: ContentItem[]) =>
               : 0,
     );
 
-const getTypeOptions = (items: ContentItem[]): TypeOption[] => [
-    { value: ALL_TYPES, label: ALL_TYPES_LABEL },
-    ...[...new Set(items.map((item) => item.type))]
-        .sort()
-        .map((type) => ({ value: type, label: type })),
-];
+const getTypeOptions = (items: ContentItem[], locale: string): TypeOption[] => {
+    const types = Array.from(new Set(items.map((item) => item.type)));
+    const options = types
+        .map((type) => ({ value: type, label: type }))
+        .sort((a, b) => a.label.localeCompare(b.label, locale));
+
+    return [{ value: ALL_TYPES, label: ALL_TYPES_LABEL }, ...options];
+};
 
 export function createContentLibraryViewModel(
     items: ContentItem[],
@@ -69,7 +71,7 @@ export function createContentLibraryViewModel(
 
     return {
         title: 'Content Library',
-        types: getTypeOptions(items),
+        types: getTypeOptions(items, locale),
         selectedTypeLabel: criteria.type || ALL_TYPES_LABEL,
         items: sortNewestFirst(filterItems(items, criteria)).map((item) => ({
             id: item.id,

@@ -125,4 +125,22 @@ describe('content library ViewModel', () => {
             { value: 'recording', label: 'recording' },
         ]);
     });
+
+    it('sorts type options alphabetically regardless of letter case', () => {
+        const items = [
+            buildContentItem({ id: '1', type: 'lesson' }),
+            buildContentItem({ id: '2', type: 'Webinar' }),
+            buildContentItem({ id: '3', type: 'blueprint' }),
+        ];
+
+        const model = createContentLibraryViewModel(items, locale);
+
+        // Assert: capitalized types sort as words, not before lowercase ones
+        expect(model.types.map((option) => option.label)).toEqual([
+            'All types',
+            'blueprint',
+            'lesson',
+            'Webinar',
+        ]);
+    });
 });
