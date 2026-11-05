@@ -19,11 +19,14 @@ export interface ContentDashboardItemViewModel extends Omit<
 }
 
 export interface ContentDashboardViewModel {
+    selectedType: string | null;
+    types: string[];
     items: ContentDashboardItemViewModel[];
 }
 
 export interface ContentDashboardViewModelOptions {
     locale?: string;
+    selectedType?: string | null;
 }
 
 export const contentItems: readonly ContentItem[] = content.items;
@@ -35,9 +38,20 @@ export function createContentDashboardViewModel(
     const dateFormatter = new Intl.DateTimeFormat(options?.locale, {
         dateStyle: 'medium',
     });
+    const types = getTypesFromItems(items);
+    const selectedType = types.has(options.selectedType ?? '')
+        ? (options.selectedType as string)
+        : null;
+
+    const typesAsSortedArray = [...types].toSorted();
 
     return {
+        selectedType,
+        types: typesAsSortedArray,
         items: items
+            .filter(
+                (item) => selectedType === null || item.type === selectedType,
+            )
             .toSorted((firstItem, secondItem) =>
                 secondItem.publishedAt.localeCompare(firstItem.publishedAt),
             )
@@ -48,4 +62,12 @@ export function createContentDashboardViewModel(
                 ),
             })),
     };
+}
+
+function getTypesFromItems(items: readonly ContentItem[]): Set<string> {
+    const types = new Set<string>();
+    for (const item of items) {
+        types.add(item.type);
+    }
+    return types;
 }
