@@ -58,7 +58,7 @@ test('see content library with item linking to their original source', async ({
     await tabFromButtonClick.close();
 });
 
-test('filter content library by type and keep the choice after reload', async ({
+test('filter content library by type starting from the stored choice', async ({
     mount,
 }) => {
     const items = [
@@ -66,43 +66,39 @@ test('filter content library by type and keep the choice after reload', async ({
         buildContentItem({ id: 'c_0142', type: 'masterclass' }),
     ];
     const page = await mount('ContentLibraryPage/Default', {
-        props: { items },
+        props: { items, stored: { type: 'masterclass' } },
     });
-    const urlSearch = () => new URL(page.page().url()).search;
+    const cards = page.getByRole('listitem');
 
-    await page.getByRole('button', { name: 'All types', exact: true }).click();
+    // Assert: the stored type drives the cards
+    await expect(cards).toHaveCount(1);
 
-    // Assert: first load has every type to pick from
+    await page
+        .getByRole('button', { name: 'masterclass', exact: true })
+        .click();
+
+    // Assert: every type is offered and the stored one is selected
     await expect(page.getByRole('menuitemradio')).toHaveText([
         'All types',
         'lesson',
         'masterclass',
     ]);
-    const cards = page.getByRole('listitem');
-    await expect(cards).toHaveCount(2);
+    await expect(
+        page.getByRole('menuitemradio', { name: 'masterclass', exact: true }),
+    ).toBeChecked();
 
     await page
-        .getByRole('menuitemradio', { name: 'masterclass', exact: true })
-        .click();
-
-    // Assert: the chosen type is stored in the URL and drives the cards
-    await expect(cards).toHaveCount(1);
-
-    const reloaded = await mount('ContentLibraryPage/Default', {
-        path: `/${urlSearch()}`,
-        props: { items },
-    });
-
-    // Assert: after reload the type is still in the URL and selected
-    expect(urlSearch()).toBe('?type=masterclass');
-    await reloaded
-        .getByRole('button', { name: 'masterclass', exact: true })
-        .click();
-    await reloaded
         .getByRole('menuitemradio', { name: 'All types', exact: true })
         .click();
 
-    // Assert: choosing "All types" clears the URL and selects it
-    await expect.poll(urlSearch).toBe('');
+    // Assert: "All types" brings every item back
     await expect(cards).toHaveCount(2);
+
+    await page.getByRole('button', { name: 'All types', exact: true }).click();
+    await page
+        .getByRole('menuitemradio', { name: 'lesson', exact: true })
+        .click();
+
+    // Assert: only the chosen type remains
+    await expect(cards).toHaveCount(1);
 });
