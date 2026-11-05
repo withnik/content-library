@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
     type ContentRecord,
+    listContentTypes,
     presentContentLibrary,
+    resolveSelectedType,
 } from '../src/contentLibraryViewModel';
 
 function aContentRecord(overrides: Partial<ContentRecord>): ContentRecord {
@@ -58,6 +60,105 @@ describe('The content library', () => {
             expect.objectContaining({ id: 'c_0002' }),
             expect.objectContaining({ id: 'c_0001' }),
         ]);
+    });
+
+    describe('type filter', () => {
+        it('narrows the cards to the selected type', () => {
+            const lesson = aContentRecord({ id: 'c_0001', type: 'lesson' });
+            const recording = aContentRecord({
+                id: 'c_0002',
+                type: 'recording',
+            });
+
+            const cards = presentContentLibrary([lesson, recording], {
+                type: 'recording',
+            });
+
+            expect(cards).toEqual([expect.objectContaining({ id: 'c_0002' })]);
+        });
+
+        it('keeps the latest published item of the selected type first', () => {
+            const olderRecording = aContentRecord({
+                id: 'c_0001',
+                type: 'recording',
+                publishedAt: '2025-12-04',
+            });
+            const lesson = aContentRecord({
+                id: 'c_0002',
+                type: 'lesson',
+                publishedAt: '2026-03-01',
+            });
+            const newerRecording = aContentRecord({
+                id: 'c_0003',
+                type: 'recording',
+                publishedAt: '2026-09-25',
+            });
+
+            const cards = presentContentLibrary(
+                [olderRecording, lesson, newerRecording],
+                { type: 'recording' },
+            );
+
+            expect(cards).toEqual([
+                expect.objectContaining({ id: 'c_0003' }),
+                expect.objectContaining({ id: 'c_0001' }),
+            ]);
+        });
+
+        it('keeps every type when no type is selected', () => {
+            const lesson = aContentRecord({
+                id: 'c_0001',
+                type: 'lesson',
+                publishedAt: '2026-01-02',
+            });
+            const recording = aContentRecord({
+                id: 'c_0002',
+                type: 'recording',
+                publishedAt: '2026-01-01',
+            });
+
+            const cards = presentContentLibrary([lesson, recording], {
+                type: null,
+            });
+
+            expect(cards).toEqual([
+                expect.objectContaining({ id: 'c_0001' }),
+                expect.objectContaining({ id: 'c_0002' }),
+            ]);
+        });
+    });
+
+    describe('type filter options', () => {
+        it('offers each type present in the content once, alphabetically', () => {
+            const records = [
+                aContentRecord({ id: 'c_0001', type: 'recording' }),
+                aContentRecord({ id: 'c_0002', type: 'lesson' }),
+                aContentRecord({ id: 'c_0003', type: 'recording' }),
+                aContentRecord({ id: 'c_0004', type: 'blueprint' }),
+            ];
+
+            const contentTypes = listContentTypes(records);
+
+            expect(contentTypes).toEqual(['blueprint', 'lesson', 'recording']);
+        });
+    });
+
+    describe('selected type', () => {
+        it('restores a remembered type that is still in the content', () => {
+            const contentTypes = ['lesson', 'recording'];
+
+            const selectedType = resolveSelectedType('recording', contentTypes);
+
+            expect(selectedType).toBe('recording');
+        });
+
+        it('shows all types when the remembered type is no longer in the content', () => {
+            const contentTypes = ['lesson', 'recording'];
+
+            const selectedType = resolveSelectedType('gameworks', contentTypes);
+
+            expect(selectedType).toBeNull();
+        });
     });
 
     describe('published date', () => {
