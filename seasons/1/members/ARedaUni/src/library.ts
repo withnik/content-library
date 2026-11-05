@@ -20,6 +20,10 @@ export type LibraryEntry = {
     publishedOn: string;
 };
 
+// ISO dates (YYYY-MM-DD) sort correctly as plain strings.
+const byNewestFirst = (a: ContentItem, b: ContentItem): number =>
+    b.publishedAt.localeCompare(a.publishedAt);
+
 export const presentLibrary = (
     items: readonly ContentItem[],
     { locale }: { locale: string },
@@ -31,10 +35,10 @@ export const presentLibrary = (
         timeZone: 'UTC',
     });
 
-    // ISO dates (YYYY-MM-DD) sort correctly as plain strings.
-    return [...items]
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
-        .map(({ id, title, type, url, excerpt, publishedAt }) => ({
+    const newestFirst = [...items].sort(byNewestFirst);
+
+    const entries = newestFirst.map(
+        ({ id, title, type, url, excerpt, publishedAt }) => ({
             id,
             title,
             type,
@@ -42,5 +46,20 @@ export const presentLibrary = (
             excerpt,
             publishedAt,
             publishedOn: date.format(new Date(publishedAt)),
-        }));
+        }),
+    );
+
+    return entries;
+};
+
+export const filterByType = (
+    items: ContentItem[],
+    type: string,
+): ContentItem[] => {
+    const ofType = items.filter((item) => item.type === type);
+
+    // filter() returned a new array, so sorting it in place leaves `items` alone.
+    const newestFirst = ofType.sort(byNewestFirst);
+
+    return newestFirst;
 };
