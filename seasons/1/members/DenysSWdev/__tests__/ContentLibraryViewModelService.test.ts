@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+    ALL_TYPES,
     createContentLibraryViewModel,
     type Criteria,
 } from '../src/ContentLibraryViewModelService.ts';
@@ -97,7 +98,7 @@ describe('content library ViewModel', () => {
                 publishedAt: '2026-06-24',
             }),
         ];
-        const criteria: Criteria = { type: '' };
+        const criteria: Criteria = { type: ALL_TYPES };
 
         const model = createContentLibraryViewModel(items, locale, criteria);
 
@@ -117,6 +118,11 @@ describe('content library ViewModel', () => {
         const model = createContentLibraryViewModel(items, locale, criteria);
 
         // Assert: options come from all items, not only the filtered ones
-        expect(model.types).toEqual(['', 'lesson', 'masterclass', 'recording']);
+        expect(model.types).toEqual([
+            { value: ALL_TYPES, label: 'All types' },
+            { value: 'lesson', label: 'lesson' },
+            { value: 'masterclass', label: 'masterclass' },
+            { value: 'recording', label: 'recording' },
+        ]);
     });
 });
