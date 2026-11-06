@@ -16,11 +16,18 @@ type ContentLibraryPageModel = {
 
 export function createContentLibraryPageModel(
     items: Content[],
+    filterBy: string,
 ): ContentLibraryPageModel {
     const pageTitle = 'Content Library';
+    const visibleItems =
+        filterBy === ''
+            ? items
+            : items.filter(
+                  (item) => item.type.toLowerCase() === filterBy.toLowerCase(),
+              );
     return {
         title: pageTitle,
-        items: sortByNewest(items).map((item) => ({
+        items: sortByNewest(visibleItems).map((item) => ({
             id: item.id,
             title: item.title,
             excerpt: item.excerpt,
