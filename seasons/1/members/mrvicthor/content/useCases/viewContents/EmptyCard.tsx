@@ -1,8 +1,7 @@
 import { Blankslate } from '@primer/react/experimental';
-import type { FilterBy } from '../../domain/ContentService';
 
 type Props = {
-    filterBy: FilterBy;
+    filterBy: string;
 };
 
 const EmptyCard = ({ filterBy }: Props) => {
