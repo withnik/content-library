@@ -13,7 +13,10 @@ type ContentProps = {
 };
 export const ContentLibrary = ({ items }: ContentProps) => {
     return (
-        <ul className="flex list-none flex-col gap-3 px-4">
+        <ul
+            aria-label="Content items"
+            className="flex list-none flex-col gap-3 px-4"
+        >
             {items.map((c) => (
                 <li key={c.id}>
                     <ContentCard

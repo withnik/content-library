@@ -1,29 +1,30 @@
 import { ActionList, ActionMenu } from '@primer/react';
-import { FILTER_OPTIONS, type FilterBy } from '../../domain/ContentService';
+
 type Props = {
-    filterBy: FilterBy;
-    setFilterBy: React.Dispatch<React.SetStateAction<FilterBy>>;
+    filterBy: string;
+    handleFilter: (filter: string) => void;
+    filterOptions: readonly ['', ...string[]];
 };
 
-const FilterDropdown = ({ filterBy, setFilterBy }: Props) => {
+const FilterDropdown = ({ filterBy, handleFilter, filterOptions }: Props) => {
     return (
         <div className="px-4">
             <ActionMenu>
                 <ActionMenu.Button className="w-37.5 capitalize">
-                    {filterBy === 'all' ? 'All types' : filterBy}
+                    {filterBy === '' ? 'All types' : filterBy}
                 </ActionMenu.Button>
                 <ActionMenu.Overlay width="small">
                     <ActionList
                         selectionVariant="single"
                         className="capitalize"
                     >
-                        {FILTER_OPTIONS.map((option) => (
+                        {filterOptions.map((option) => (
                             <ActionList.Item
                                 key={option}
                                 selected={option === filterBy}
-                                onSelect={() => setFilterBy(option)}
+                                onSelect={() => handleFilter(option)}
                             >
-                                {option}
+                                {option === '' ? 'All types' : option}
                             </ActionList.Item>
                         ))}
                     </ActionList>
