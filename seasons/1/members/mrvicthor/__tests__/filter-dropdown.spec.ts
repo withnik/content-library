@@ -53,4 +53,28 @@ test.describe('Filter Dropdown', () => {
         await expect(page).not.toHaveURL(/filter/);
         await expect(cards).toHaveCount(6);
     });
+
+    test('keeps the filter after a reload', async ({ mount, page }) => {
+        const app = await mount(STORY, { props: { items } });
+        const cards = app.getByRole('listitem');
+
+        await expect(cards).toHaveCount(6);
+
+        await openDropdown(page);
+        await option(page, /lesson/i).click();
+        await expect(page).toHaveURL(/filter=lesson/);
+        await expect(cards).toHaveCount(2);
+
+        const search = new URL(page.url()).search;
+        const reloaded = await mount(STORY, {
+            path: `/${search}`,
+            props: { items },
+        });
+
+        await expect(page).toHaveURL(/filter=lesson/);
+        await expect(
+            reloaded.getByRole('button', { name: /lesson/i, exact: true }),
+        ).toBeVisible();
+        await expect(reloaded.getByRole('listitem')).toHaveCount(2);
+    });
 });
