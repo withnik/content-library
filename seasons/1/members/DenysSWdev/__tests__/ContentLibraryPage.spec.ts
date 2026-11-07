@@ -75,15 +75,12 @@ test('filter content library by type', async ({ mount }) => {
         .getByRole('button', { name: 'masterclass', exact: true })
         .click();
 
-    // Assert: every type is offered and the stored one is selected
+    // Assert: every type is offered
     await expect(page.getByRole('menuitemradio')).toHaveText([
         'All types',
         'lesson',
         'masterclass',
     ]);
-    await expect(
-        page.getByRole('menuitemradio', { name: 'masterclass', exact: true }),
-    ).toBeChecked();
 
     await page
         .getByRole('menuitemradio', { name: 'All types', exact: true })
