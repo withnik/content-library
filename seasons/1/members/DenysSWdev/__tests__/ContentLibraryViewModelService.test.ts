@@ -80,7 +80,7 @@ describe('content library ViewModel', () => {
         expect(model.items.map((item) => item.id)).toEqual(['3', '1']);
     });
 
-    it('returns every item newest first when no type is selected', () => {
+    it('does not filter when all types is selected', () => {
         const items = [
             buildContentItem({
                 id: '1',
