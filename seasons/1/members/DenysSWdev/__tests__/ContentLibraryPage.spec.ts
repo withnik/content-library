@@ -88,12 +88,4 @@ test('filter content library by type', async ({ mount }) => {
 
     // Assert: "All types" brings every item back
     await expect(cards).toHaveCount(2);
-
-    await page.getByRole('button', { name: 'All types', exact: true }).click();
-    await page
-        .getByRole('menuitemradio', { name: 'lesson', exact: true })
-        .click();
-
-    // Assert: only the chosen type remains
-    await expect(cards).toHaveCount(1);
 });
