@@ -58,9 +58,7 @@ test('see content library with item linking to their original source', async ({
     await tabFromButtonClick.close();
 });
 
-test('filter content library by type starting from the stored choice', async ({
-    mount,
-}) => {
+test('filter content library by type', async ({ mount }) => {
     const items = [
         buildContentItem({ id: 'c_0001', type: 'lesson' }),
         buildContentItem({ id: 'c_0142', type: 'masterclass' }),
