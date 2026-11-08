@@ -3,7 +3,7 @@ import { ActionList, ActionMenu } from '@primer/react';
 type Props = {
     filterBy: string;
     handleFilter: (filter: string) => void;
-    filterOptions: readonly ['', ...string[]];
+    filterOptions: string[];
 };
 
 const FilterDropdown = ({ filterBy, handleFilter, filterOptions }: Props) => {

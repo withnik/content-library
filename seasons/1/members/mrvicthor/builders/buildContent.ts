@@ -1,9 +1,7 @@
 import { type Content } from '../content/domain/ContentService';
 let seq = 0;
-const nextId = () => `c_${(seq++).toString().padStart(4, '0')}`;
-
 export const buildContent = ({
-    id = nextId(),
+    id = `${++seq}`,
     ...overrides
 }: Partial<Content> = {}): Content => ({
     id,
