@@ -91,21 +91,7 @@ describe('The content library', () => {
             });
         });
 
-        it('narrows the cards to the selected type', () => {
-            const lesson = aContentRecord({ id: 'c_0001', type: 'lesson' });
-            const recording = aContentRecord({
-                id: 'c_0002',
-                type: 'recording',
-            });
-
-            const { cards } = presentContentLibrary([lesson, recording], {
-                type: 'recording',
-            });
-
-            expect(cards).toEqual([expect.objectContaining({ id: 'c_0002' })]);
-        });
-
-        it('keeps the latest published item of the selected type first', () => {
+        it('narrows the cards to the selected type, newest first', () => {
             const olderRecording = aContentRecord({
                 id: 'c_0001',
                 type: 'recording',
@@ -122,15 +108,22 @@ describe('The content library', () => {
                 publishedAt: '2026-09-25',
             });
 
-            const { cards } = presentContentLibrary(
+            const view = presentContentLibrary(
                 [olderRecording, lesson, newerRecording],
                 { type: 'recording' },
             );
 
-            expect(cards).toEqual([
-                expect.objectContaining({ id: 'c_0003' }),
-                expect.objectContaining({ id: 'c_0001' }),
-            ]);
+            expect(view).toEqual({
+                cards: [
+                    expect.objectContaining({ id: 'c_0003' }),
+                    expect.objectContaining({ id: 'c_0001' }),
+                ],
+                typeOptions: [
+                    { label: 'All types', type: null, selected: false },
+                    { label: 'lesson', type: 'lesson', selected: false },
+                    { label: 'recording', type: 'recording', selected: true },
+                ],
+            });
         });
     });
 
