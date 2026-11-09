@@ -4,8 +4,7 @@
 // one is mount('App/Default').
 import { App } from '../src/App';
 import type { ContentRecord } from '../src/contentLibraryViewModel';
-import { browserSelectedTypeStorage } from '../src/selectedTypeStorage';
 
 export const Default = ({ records }: { records: ContentRecord[] }) => (
-    <App records={records} selectedTypeStorage={browserSelectedTypeStorage} />
+    <App records={records} />
 );

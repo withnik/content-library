@@ -1,29 +1,20 @@
 import { PageHeader } from '@primer/react';
-import { useState } from 'react';
 
 import { ContentLibrary } from './ContentLibrary';
 import {
     type ContentRecord,
     presentContentLibrary,
 } from './contentLibraryViewModel';
-import type { SelectedTypeStorage } from './selectedTypeStorage';
 import { TypeFilter } from './TypeFilter';
+import { useSearchParam } from './useSearchParam';
 
 type AppProps = {
     records: ContentRecord[];
-    selectedTypeStorage: SelectedTypeStorage;
 };
 
-export function App({ records, selectedTypeStorage }: AppProps) {
-    const [selectedType, setSelectedType] = useState(() =>
-        selectedTypeStorage.load(),
-    );
+export function App({ records }: AppProps) {
+    const [selectedType, selectType] = useSearchParam('type');
     const view = presentContentLibrary(records, { type: selectedType });
-
-    function selectType(type: string | null) {
-        setSelectedType(type);
-        selectedTypeStorage.save(type);
-    }
 
     return (
         <main className="mx-auto flex max-w-3xl flex-col gap-4 p-6">
