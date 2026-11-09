@@ -15,10 +15,13 @@ export function useContentLibrary(contentItems: readonly ContentItem[]) {
         writeTypeToUrl(next);
     };
 
+    const typeOptions = typeFilterOptions(contentItems);
+    const items = filterContent(sortByPublishedAtDesc(contentItems), { type });
+
     return {
         type,
         setType,
-        typeOptions: typeFilterOptions(contentItems),
-        items: filterContent(sortByPublishedAtDesc(contentItems), { type }),
+        typeOptions,
+        items,
     };
 }
