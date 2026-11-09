@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
     type ContentRecord,
-    listContentTypes,
     presentContentLibrary,
     resolveSelectedType,
 } from '../src/contentLibraryViewModel';
@@ -141,23 +140,16 @@ describe('The content library', () => {
 
             expect(typeOptions).toEqual([
                 expect.objectContaining({ label: 'All types', type: null }),
-                expect.objectContaining({ label: 'blueprint', type: 'blueprint' }),
+                expect.objectContaining({
+                    label: 'blueprint',
+                    type: 'blueprint',
+                }),
                 expect.objectContaining({ label: 'lesson', type: 'lesson' }),
-                expect.objectContaining({ label: 'recording', type: 'recording' }),
+                expect.objectContaining({
+                    label: 'recording',
+                    type: 'recording',
+                }),
             ]);
-        });
-
-        it('offers each type present in the content once, alphabetically', () => {
-            const records = [
-                aContentRecord({ id: 'c_0001', type: 'recording' }),
-                aContentRecord({ id: 'c_0002', type: 'lesson' }),
-                aContentRecord({ id: 'c_0003', type: 'recording' }),
-                aContentRecord({ id: 'c_0004', type: 'blueprint' }),
-            ];
-
-            const contentTypes = listContentTypes(records);
-
-            expect(contentTypes).toEqual(['blueprint', 'lesson', 'recording']);
         });
     });
 
