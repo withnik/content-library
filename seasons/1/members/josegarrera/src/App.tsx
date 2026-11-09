@@ -4,9 +4,7 @@ import { useState } from 'react';
 import { ContentLibrary } from './ContentLibrary';
 import {
     type ContentRecord,
-    listContentTypes,
     presentContentLibrary,
-    resolveSelectedType,
 } from './contentLibraryViewModel';
 import type { SelectedTypeStorage } from './selectedTypeStorage';
 import { TypeFilter } from './TypeFilter';
@@ -17,10 +15,10 @@ type AppProps = {
 };
 
 export function App({ records, selectedTypeStorage }: AppProps) {
-    const contentTypes = listContentTypes(records);
     const [selectedType, setSelectedType] = useState(() =>
-        resolveSelectedType(selectedTypeStorage.load(), contentTypes),
+        selectedTypeStorage.load(),
     );
+    const view = presentContentLibrary(records, { type: selectedType });
 
     function selectType(type: string | null) {
         setSelectedType(type);
@@ -36,16 +34,11 @@ export function App({ records, selectedTypeStorage }: AppProps) {
             </PageHeader>
             <div>
                 <TypeFilter
-                    contentTypes={contentTypes}
-                    selectedType={selectedType}
+                    typeOptions={view.typeOptions}
                     onSelect={selectType}
                 />
             </div>
-            <ContentLibrary
-                cards={
-                    presentContentLibrary(records, { type: selectedType }).cards
-                }
-            />
+            <ContentLibrary cards={view.cards} />
         </main>
     );
 }

@@ -1,34 +1,27 @@
 import { ActionList, ActionMenu } from '@primer/react';
 
+import type { TypeOption } from './contentLibraryViewModel';
+
 type TypeFilterProps = {
-    contentTypes: string[];
-    selectedType: string | null;
+    typeOptions: TypeOption[];
     onSelect: (type: string | null) => void;
 };
 
-export function TypeFilter({
-    contentTypes,
-    selectedType,
-    onSelect,
-}: TypeFilterProps) {
+export function TypeFilter({ typeOptions, onSelect }: TypeFilterProps) {
+    const selectedOption = typeOptions.find((option) => option.selected);
+
     return (
         <ActionMenu>
-            <ActionMenu.Button>{selectedType ?? 'All types'}</ActionMenu.Button>
+            <ActionMenu.Button>{selectedOption?.label}</ActionMenu.Button>
             <ActionMenu.Overlay>
                 <ActionList selectionVariant="single">
-                    <ActionList.Item
-                        selected={selectedType === null}
-                        onSelect={() => onSelect(null)}
-                    >
-                        All types
-                    </ActionList.Item>
-                    {contentTypes.map((type) => (
+                    {typeOptions.map((option) => (
                         <ActionList.Item
-                            key={type}
-                            selected={type === selectedType}
-                            onSelect={() => onSelect(type)}
+                            key={option.label}
+                            selected={option.selected}
+                            onSelect={() => onSelect(option.type)}
                         >
-                            {type}
+                            {option.label}
                         </ActionList.Item>
                     ))}
                 </ActionList>

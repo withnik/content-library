@@ -81,13 +81,13 @@ function presentCard({
     };
 }
 
-export function listContentTypes(records: ContentRecord[]): string[] {
+function listContentTypes(records: ContentRecord[]): string[] {
     const uniqueTypes = new Set(records.map((record) => record.type));
 
     return [...uniqueTypes].sort();
 }
 
-export function resolveSelectedType(
+function resolveSelectedType(
     storedType: string | null,
     contentTypes: string[],
 ): string | null {
