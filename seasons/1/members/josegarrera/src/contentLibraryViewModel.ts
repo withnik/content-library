@@ -20,24 +20,39 @@ export type ContentFilter = {
     type: string | null;
 };
 
+export type ContentLibraryView = {
+    cards: ContentCard[];
+};
+
 export function presentContentLibrary(
     records: ContentRecord[],
     filter: ContentFilter = { type: null },
-): ContentCard[] {
+): ContentLibraryView {
     const matchingRecords = records.filter(
         (record) => filter.type === null || record.type === filter.type,
     );
 
-    return sortNewestFirst(matchingRecords).map(
-        ({ id, title, type, excerpt, url, publishedAt }) => ({
-            id,
-            title,
-            type,
-            excerpt,
-            url,
-            publishedDate: formatPublishedAt(publishedAt),
-        }),
-    );
+    return {
+        cards: sortNewestFirst(matchingRecords).map(presentCard),
+    };
+}
+
+function presentCard({
+    id,
+    title,
+    type,
+    excerpt,
+    url,
+    publishedAt,
+}: ContentRecord): ContentCard {
+    return {
+        id,
+        title,
+        type,
+        excerpt,
+        url,
+        publishedDate: formatPublishedAt(publishedAt),
+    };
 }
 
 export function listContentTypes(records: ContentRecord[]): string[] {

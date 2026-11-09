@@ -42,7 +42,9 @@ export function App({ records, selectedTypeStorage }: AppProps) {
                 />
             </div>
             <ContentLibrary
-                cards={presentContentLibrary(records, { type: selectedType })}
+                cards={
+                    presentContentLibrary(records, { type: selectedType }).cards
+                }
             />
         </main>
     );

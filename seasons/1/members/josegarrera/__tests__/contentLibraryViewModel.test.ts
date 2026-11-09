@@ -29,7 +29,7 @@ describe('The content library', () => {
             thumbnailUrl: null,
         };
 
-        const cards = presentContentLibrary([record]);
+        const { cards } = presentContentLibrary([record]);
 
         expect(cards).toEqual([
             {
@@ -54,7 +54,7 @@ describe('The content library', () => {
             publishedAt: '2026-09-25',
         });
 
-        const cards = presentContentLibrary([older, newer]);
+        const { cards } = presentContentLibrary([older, newer]);
 
         expect(cards).toEqual([
             expect.objectContaining({ id: 'c_0002' }),
@@ -70,7 +70,7 @@ describe('The content library', () => {
                 type: 'recording',
             });
 
-            const cards = presentContentLibrary([lesson, recording], {
+            const { cards } = presentContentLibrary([lesson, recording], {
                 type: 'recording',
             });
 
@@ -94,7 +94,7 @@ describe('The content library', () => {
                 publishedAt: '2026-09-25',
             });
 
-            const cards = presentContentLibrary(
+            const { cards } = presentContentLibrary(
                 [olderRecording, lesson, newerRecording],
                 { type: 'recording' },
             );
@@ -117,7 +117,7 @@ describe('The content library', () => {
                 publishedAt: '2026-01-01',
             });
 
-            const cards = presentContentLibrary([lesson, recording], {
+            const { cards } = presentContentLibrary([lesson, recording], {
                 type: null,
             });
 
@@ -169,7 +169,7 @@ describe('The content library', () => {
         it('keeps the calendar day west of Greenwich', () => {
             vi.stubEnv('TZ', 'Pacific/Honolulu');
 
-            const cards = presentContentLibrary([
+            const { cards } = presentContentLibrary([
                 aContentRecord({ publishedAt: '2026-04-02' }),
             ]);
 
@@ -181,7 +181,7 @@ describe('The content library', () => {
         it('keeps the calendar day east of Greenwich', () => {
             vi.stubEnv('TZ', 'Asia/Tokyo');
 
-            const cards = presentContentLibrary([
+            const { cards } = presentContentLibrary([
                 aContentRecord({ publishedAt: '2026-04-02' }),
             ]);
 
