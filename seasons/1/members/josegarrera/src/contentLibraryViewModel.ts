@@ -35,22 +35,24 @@ export function presentContentLibrary(
     records: ContentRecord[],
     filter: ContentFilter = { type: null },
 ): ContentLibraryView {
+    const contentTypes = listContentTypes(records);
+    const selectedType = resolveSelectedType(filter.type, contentTypes);
     const matchingRecords = records.filter(
-        (record) => filter.type === null || record.type === filter.type,
+        (record) => selectedType === null || record.type === selectedType,
     );
 
     return {
         cards: sortNewestFirst(matchingRecords).map(presentCard),
-        typeOptions: presentTypeOptions(records, filter.type),
+        typeOptions: presentTypeOptions(contentTypes, selectedType),
     };
 }
 
 function presentTypeOptions(
-    records: ContentRecord[],
+    contentTypes: string[],
     selectedType: string | null,
 ): TypeOption[] {
     const allTypes = { label: 'All types', type: null };
-    const eachType = listContentTypes(records).map((type) => ({
+    const eachType = contentTypes.map((type) => ({
         label: type,
         type,
     }));

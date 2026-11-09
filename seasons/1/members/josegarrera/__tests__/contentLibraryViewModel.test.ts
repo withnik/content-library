@@ -125,6 +125,34 @@ describe('The content library', () => {
                 ],
             });
         });
+        it('selects all types and lists every card when the chosen type is not in the content', () => {
+            const lesson = aContentRecord({
+                id: 'c_0001',
+                type: 'lesson',
+                publishedAt: '2026-01-02',
+            });
+            const recording = aContentRecord({
+                id: 'c_0002',
+                type: 'recording',
+                publishedAt: '2026-01-01',
+            });
+
+            const view = presentContentLibrary([lesson, recording], {
+                type: 'gameworks',
+            });
+
+            expect(view).toEqual({
+                cards: [
+                    expect.objectContaining({ id: 'c_0001' }),
+                    expect.objectContaining({ id: 'c_0002' }),
+                ],
+                typeOptions: [
+                    { label: 'All types', type: null, selected: true },
+                    { label: 'lesson', type: 'lesson', selected: false },
+                    { label: 'recording', type: 'recording', selected: false },
+                ],
+            });
+        });
     });
 
     describe('type filter options', () => {
