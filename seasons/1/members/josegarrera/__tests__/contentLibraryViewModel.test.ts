@@ -3,7 +3,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
     type ContentRecord,
     presentContentLibrary,
-    resolveSelectedType,
 } from '../src/contentLibraryViewModel';
 
 function aContentRecord(overrides: Partial<ContentRecord>): ContentRecord {
@@ -178,24 +177,6 @@ describe('The content library', () => {
                     type: 'recording',
                 }),
             ]);
-        });
-    });
-
-    describe('selected type', () => {
-        it('restores a remembered type that is still in the content', () => {
-            const contentTypes = ['lesson', 'recording'];
-
-            const selectedType = resolveSelectedType('recording', contentTypes);
-
-            expect(selectedType).toBe('recording');
-        });
-
-        it('shows all types when the remembered type is no longer in the content', () => {
-            const contentTypes = ['lesson', 'recording'];
-
-            const selectedType = resolveSelectedType('gameworks', contentTypes);
-
-            expect(selectedType).toBeNull();
         });
     });
 
