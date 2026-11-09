@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
     ALL_CONTENT_TYPE,
     filterContent,
+    typeFilterOptions,
     uniqueContentTypes,
 } from '../src/lib/filter-content';
 import type { ContentItem } from '../src/types/content.types';
@@ -51,5 +52,15 @@ describe('filterContent', () => {
 describe('uniqueContentTypes', () => {
     it('derives sorted unique types from the items', () => {
         expect(uniqueContentTypes(items)).toEqual(['lesson', 'recording']);
+    });
+});
+
+describe('typeFilterOptions', () => {
+    it('prefixes all to the derived types', () => {
+        expect(typeFilterOptions(items)).toEqual([
+            ALL_CONTENT_TYPE,
+            'lesson',
+            'recording',
+        ]);
     });
 });
