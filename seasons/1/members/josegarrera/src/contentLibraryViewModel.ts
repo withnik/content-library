@@ -41,19 +41,24 @@ export function presentContentLibrary(
 
     return {
         cards: sortNewestFirst(matchingRecords).map(presentCard),
-        typeOptions: presentTypeOptions(records),
+        typeOptions: presentTypeOptions(records, filter.type),
     };
 }
 
-function presentTypeOptions(records: ContentRecord[]): TypeOption[] {
-    const allTypes = { label: 'All types', type: null, selected: false };
+function presentTypeOptions(
+    records: ContentRecord[],
+    selectedType: string | null,
+): TypeOption[] {
+    const allTypes = { label: 'All types', type: null };
     const eachType = listContentTypes(records).map((type) => ({
         label: type,
         type,
-        selected: false,
     }));
 
-    return [allTypes, ...eachType];
+    return [allTypes, ...eachType].map((option) => ({
+        ...option,
+        selected: option.type === selectedType,
+    }));
 }
 
 function presentCard({
