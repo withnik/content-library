@@ -17,3 +17,21 @@
 Bursts 9–11 merged: `mount()` props must be serializable, so the story uses the
 real `localStorage` adapter instead of an in-memory one. One save-then-restore
 journey covers saving, restoring and the `main.tsx` wiring.
+
+# Ketchup Plan: Review round 1 (PR #17)
+
+URL is the single source of truth; one big unit (`presentContentLibrary`) owns what the page shows.
+
+## TODO
+
+- [ ] R1: Glossary — Selected type lives in the page's link
+- [ ] R2: `presentContentLibrary` returns `{ cards }` (task-1 tests read `.cards`)
+- [ ] R3: Type options — All types first, then each type once, alphabetically; `listContentTypes` private
+- [ ] R4: No type — All types selected, every card listed
+- [ ] R5: A selected type narrows the cards, newest first, and is the selected option (merges two tests)
+- [ ] R6: Unknown type — All types selected, every card listed; `resolveSelectedType` private
+- [ ] R7: `TypeFilter` renders the ViewModel's `typeOptions`
+- [ ] R8: Playwright — open a filtered link; URL replaces `localStorage` (`useSearchParam`, `pushState`)
+- [ ] R9: Playwright — narrow, reset, Back (`popstate`)
+
+## DONE
