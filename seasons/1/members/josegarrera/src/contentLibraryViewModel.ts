@@ -20,8 +20,15 @@ export type ContentFilter = {
     type: string | null;
 };
 
+export type TypeOption = {
+    label: string;
+    type: string | null;
+    selected: boolean;
+};
+
 export type ContentLibraryView = {
     cards: ContentCard[];
+    typeOptions: TypeOption[];
 };
 
 export function presentContentLibrary(
@@ -34,7 +41,19 @@ export function presentContentLibrary(
 
     return {
         cards: sortNewestFirst(matchingRecords).map(presentCard),
+        typeOptions: presentTypeOptions(records),
     };
+}
+
+function presentTypeOptions(records: ContentRecord[]): TypeOption[] {
+    const allTypes = { label: 'All types', type: null, selected: false };
+    const eachType = listContentTypes(records).map((type) => ({
+        label: type,
+        type,
+        selected: false,
+    }));
+
+    return [allTypes, ...eachType];
 }
 
 function presentCard({
