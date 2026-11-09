@@ -3,17 +3,17 @@ import { expect, test } from '@withnik/configs/playwright';
 import { formatPublishedAt } from '../src/lib/format-published-at';
 
 test('content library user journey', async ({ mount }) => {
-    const app = await mount('App/WithStubItems');
+    const app = await mount('App/WithStubItems', { path: '/' });
 
     await expect(
         app.getByRole('heading', { name: 'Content Library' }),
     ).toBeVisible();
 
     const cards = app.locator('[data-component="Card"]');
-    await expect(cards).toHaveCount(2);
+    await expect(cards).toHaveCount(3);
 
     const first = cards.nth(0);
-    const second = cards.nth(1);
+    const last = cards.nth(2);
 
     await expect(
         first.getByRole('heading', { name: 'Newer item' }),
@@ -31,6 +31,58 @@ test('content library user journey', async ({ mount }) => {
     );
 
     await expect(
-        second.getByRole('heading', { name: 'Older item' }),
+        last.getByRole('heading', { name: 'Older item' }),
     ).toBeVisible();
+});
+
+test('filters by type, updates the URL, and All restores the list', async ({
+    mount,
+    page,
+}) => {
+    const app = await mount('App/WithStubItems', { path: '/' });
+    const cards = app.locator('[data-component="Card"]');
+    const typeFilter = app.getByRole('combobox', { name: 'Type' });
+
+    await expect(cards).toHaveCount(3);
+    await expect(typeFilter).toHaveValue('all');
+
+    await typeFilter.selectOption('lesson');
+
+    await expect(cards).toHaveCount(2);
+    await expect(
+        cards.nth(0).getByRole('heading', { name: 'Middle lesson' }),
+    ).toBeVisible();
+    await expect(
+        cards.nth(1).getByRole('heading', { name: 'Older item' }),
+    ).toBeVisible();
+    await expect(app.getByRole('heading', { name: 'Newer item' })).toHaveCount(
+        0,
+    );
+    await expect(page).toHaveURL(/\?type=lesson$/);
+
+    await typeFilter.selectOption('all');
+
+    await expect(cards).toHaveCount(3);
+    await expect(
+        cards.nth(0).getByRole('heading', { name: 'Newer item' }),
+    ).toBeVisible();
+    await expect(page).toHaveURL(/\/$/);
+});
+
+test('restores the type filter from the URL', async ({ mount }) => {
+    const app = await mount('App/WithStubItems', { path: '/?type=lesson' });
+    const cards = app.locator('[data-component="Card"]');
+    const typeFilter = app.getByRole('combobox', { name: 'Type' });
+
+    await expect(typeFilter).toHaveValue('lesson');
+    await expect(cards).toHaveCount(2);
+    await expect(
+        cards.nth(0).getByRole('heading', { name: 'Middle lesson' }),
+    ).toBeVisible();
+    await expect(
+        cards.nth(1).getByRole('heading', { name: 'Older item' }),
+    ).toBeVisible();
+    await expect(app.getByRole('heading', { name: 'Newer item' })).toHaveCount(
+        0,
+    );
 });
