@@ -44,3 +44,37 @@ test('lets a visitor find the newest content item and open its original', async 
     );
     await expect(openButton).toHaveAttribute('target', '_blank');
 });
+
+test('lets a visitor narrow the library to one type, reset it, and step back with the browser', async ({
+    mount,
+}) => {
+    const app = await mount('App/Default', {
+        props: { records: [bootstrappingBlueprint, repositoryLesson] },
+    });
+    const cards = app.getByRole('listitem');
+
+    await app.getByRole('button', { name: 'All types' }).click();
+    await app.page().getByRole('menuitemradio', { name: 'lesson' }).click();
+
+    await expect(cards).toHaveCount(1);
+    await expect(cards.first()).toContainText('The need of Repository Layer');
+
+    await app.getByRole('button', { name: 'lesson' }).click();
+    await app.page().getByRole('menuitemradio', { name: 'All types' }).click();
+
+    await expect(cards).toHaveCount(2);
+
+    await app.page().goBack();
+
+    await expect(cards).toHaveCount(1);
+});
+
+test('opens a shared link already narrowed to its type', async ({ mount }) => {
+    const app = await mount('App/Default', {
+        path: '/?type=lesson',
+        props: { records: [bootstrappingBlueprint, repositoryLesson] },
+    });
+
+    await expect(app.getByRole('listitem')).toHaveCount(1);
+    await expect(app.getByRole('button', { name: 'lesson' })).toBeVisible();
+});
