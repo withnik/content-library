@@ -39,13 +39,20 @@ test('see content library with item linking to their original source', async ({
 
     const page = await mount('ContentLibraryPage/Default', {
         props: { items },
+        path: '/?type=lesson',
     });
 
     const pageTitle = page.getByRole('heading', { name: 'Content Library' });
     await expect(pageTitle).toBeVisible();
 
     const cards = page.getByRole('listitem');
-    await expect(cards).toHaveCount(2);
+    await expect(cards).toHaveCount(1);
+    await expect(page.page()).toHaveURL(
+        (url) => url.searchParams.get('type') === 'lesson',
+    );
+
+    await page.getByRole('button', { name: 'lesson' }).click();
+    await page.getByRole('menuitemradio', { name: 'All' }).click();
 
     const firstCard = cards.first();
     const firstCardTitle = firstCard.getByRole('heading', {
