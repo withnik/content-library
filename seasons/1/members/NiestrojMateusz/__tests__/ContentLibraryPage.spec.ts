@@ -1,27 +1,77 @@
 import { expect, test } from '@withnik/configs/playwright';
+import type { ContentItem } from '../src/ContentLibraryPage';
 
-test('shows every item the adapter provides', async ({ mount }) => {
-    const page = await mount('ContentLibraryPage/Five');
+const items: ContentItem[] = [
+    {
+        id: 'c_0001',
+        title: 'Leadership in Westeros',
+        type: 'lesson',
+        media: 'article',
+        durationSeconds: null,
+        url: 'https://xy.z/leadership',
+        publishedAt: '2025-12-06',
+        excerpt: 'Explores the principles of leadership in the Seven Kingdoms.',
+        thumbnailUrl: null,
+    },
+    {
+        id: 'c_0142',
+        title: 'Tactics from the Battle of the Five Kings',
+        type: 'masterclass',
+        media: 'video',
+        durationSeconds: 1946,
+        url: 'https://xy.z/battle-tactics',
+        publishedAt: '2026-04-02',
+        excerpt: 'Learn military strategy and tactics from Westeros.',
+        thumbnailUrl: 'https://xy.z/thumbs/c_0142.jpg',
+    },
+];
 
-    await expect(page.getByRole('listitem')).toHaveCount(5);
-});
-
-test('shows title, excerpt, type and date, and links to the original', async ({
+test('see content library with item linking to their original source', async ({
     mount,
+    context,
 }) => {
-    const page = await mount('ContentLibraryPage/Single');
-    const row = page.getByRole('listitem');
-    const url = 'https://better.withnik.com/c/challenges/testing-async';
+    await context.route('https://xy.z/battle-tactics', async (route) => {
+        await route.fulfill({
+            contentType: 'text/html',
+            body: '<html><body>Origin page</body></html>',
+        });
+    });
 
-    await expect(
-        row.getByRole('link', { name: 'Testing async React components' }),
-    ).toHaveAttribute('href', url);
-    await expect(
-        row.getByRole('link', { name: 'Open original' }),
-    ).toHaveAttribute('href', url);
-    await expect(
-        row.getByText('Live refactor of a flaky test suite.'),
-    ).toBeVisible();
-    await expect(row.getByText('masterclass')).toBeVisible();
-    await expect(row.getByText('Apr 2, 2026')).toBeVisible();
+    const page = await mount('ContentLibraryPage/Default', {
+        props: { items },
+        path: '/?type=lesson',
+    });
+
+    const pageTitle = page.getByRole('heading', { name: 'Content Library' });
+    await expect(pageTitle).toBeVisible();
+
+    const cards = page.getByRole('listitem');
+    await expect(cards).toHaveCount(1);
+    await expect(page.page()).toHaveURL(
+        (url) => url.searchParams.get('type') === 'lesson',
+    );
+
+    await page.getByRole('button', { name: 'lesson' }).click();
+    await page.getByRole('menuitemradio', { name: 'All' }).click();
+
+    const firstCard = cards.first();
+    const firstCardTitle = firstCard.getByRole('heading', {
+        name: 'Tactics from the Battle of the Five Kings',
+    });
+    await expect(firstCardTitle).toBeVisible();
+
+    const [tabFromTitleClick] = await Promise.all([
+        context.waitForEvent('page'),
+        firstCardTitle.getByRole('link').click(),
+    ]);
+    await expect(tabFromTitleClick).toHaveURL('https://xy.z/battle-tactics');
+    await tabFromTitleClick.close();
+
+    await firstCard.getByRole('button').click();
+    const [tabFromButtonClick] = await Promise.all([
+        context.waitForEvent('page'),
+        firstCard.getByRole('button').click(),
+    ]);
+    await expect(tabFromButtonClick).toHaveURL('https://xy.z/battle-tactics');
+    await tabFromButtonClick.close();
 });

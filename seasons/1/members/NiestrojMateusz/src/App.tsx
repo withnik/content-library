@@ -1,6 +1,6 @@
-import { contentAdapter } from './content-library/domain/ContentAdapter';
-import { ContentLibraryPage } from './content-library/use-cases/view-content/ContentLibraryPage';
+import content from '../../../data/content.json';
+import { ContentLibraryPage } from './ContentLibraryPage';
 
 export function App() {
-    return <ContentLibraryPage adapter={contentAdapter} />;
+    return <ContentLibraryPage items={content.items} />;
 }
