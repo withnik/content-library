@@ -1,7 +1,4 @@
 {
     "extends": "@withnik/configs/tsconfig.base.json",
-    "compilerOptions": {
-        "lib": ["ES2023", "DOM", "DOM.Iterable"]
-    },
     "include": ["src", "__tests__", "*.config.ts"]
 }
