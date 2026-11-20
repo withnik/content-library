@@ -101,4 +101,43 @@ test.describe('Content Library Page', () => {
             page.getByText(/try a different search term, or clear filters./i),
         ).toBeVisible();
     });
+
+    test('Changing the type filter does not clear the search term, and vice versa.', async ({
+        mount,
+        page,
+    }) => {
+        const app = await mount(STORY, { props: { items: mixedItems } });
+        const cards = app.getByRole('listitem');
+
+        await expect(cards).toHaveCount(3);
+
+        await openDropdown(page);
+        await option(page, /lesson/i).click();
+        await expect(page).toHaveURL(/filter=lesson/);
+        await expect(cards).toHaveCount(2);
+
+        await app.getByLabel(/search/i).fill('react');
+        await expect(page).toHaveURL(/filter=lesson/);
+        await expect(page).toHaveURL(/search=react/);
+
+        await openDropdown(page);
+        await option(page, /recording/i).click();
+        await expect(page).toHaveURL(/filter=recording/);
+
+        await expect(page.getByLabel(/search/i)).toHaveValue('react');
+    });
+
+    test('Store the search query across reloads.', async ({ mount, page }) => {
+        await mount(STORY, { props: { items } });
+
+        await page.getByLabel(/search/i).fill('old');
+        const search = new URL(page.url()).search;
+        const reloaded = await mount(STORY, {
+            path: `/${search}`,
+            props: { items },
+        });
+
+        await expect(page).toHaveURL(/search=old/);
+        await expect(reloaded.getByRole('listitem')).toHaveCount(1);
+    });
 });
