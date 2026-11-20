@@ -6,6 +6,8 @@ import FilterDropdown from './FilterDropdown';
 import EmptyCard from './EmptyCard';
 import type { Content } from '../../domain/ContentService';
 import { useQueryParams } from '../../hooks/useQueryParams';
+import { useSearch } from '../../hooks/useSearch';
+import { SearchField } from '../../../src/components/SearchField';
 
 type Props = {
     items: Content[];
@@ -13,8 +15,13 @@ type Props = {
 
 const ContentLibraryPage = ({ items }: Props) => {
     const [filterParam, setFilter] = useQueryParams('filter');
+    const { search, handleSearch } = useSearch();
 
-    const viewModel = createContentLibraryPageModel(items, filterParam ?? '');
+    const viewModel = createContentLibraryPageModel(
+        items,
+        filterParam ?? '',
+        search,
+    );
     return (
         <main className="flex flex-col gap-4 p-6">
             <header className="grid grid-cols-[1fr_auto_1fr] items-center rounded-md bg-(--bgColor-emphasis) px-4 py-3 text-white [--fgColor-accent:var(--fgColor-onEmphasis)] [--fgColor-default:var(--fgColor-onEmphasis)]">
@@ -30,15 +37,18 @@ const ContentLibraryPage = ({ items }: Props) => {
                 </Heading>
                 <span aria-hidden="true" />
             </header>
-            <FilterDropdown
-                filterBy={filterParam ?? ''}
-                handleFilter={setFilter}
-                filterOptions={viewModel.filterOptions}
-            />
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <SearchField search={search} handleSearch={handleSearch} />
+                <FilterDropdown
+                    filterBy={filterParam ?? ''}
+                    handleFilter={setFilter}
+                    filterOptions={viewModel.filterOptions}
+                />
+            </div>
             {viewModel.items.length > 0 ? (
                 <ContentLibrary items={viewModel.items} />
             ) : (
-                <EmptyCard filterBy={String(filterParam)} />
+                <EmptyCard />
             )}
         </main>
     );

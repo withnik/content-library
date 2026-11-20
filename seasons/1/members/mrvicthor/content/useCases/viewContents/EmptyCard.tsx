@@ -1,14 +1,10 @@
 import { Blankslate } from '@primer/react/experimental';
 
-type Props = {
-    filterBy: string;
-};
-
-const EmptyCard = ({ filterBy }: Props) => {
+const EmptyCard = () => {
     return (
         <Blankslate spacious className="rounded-[10px] bg-white">
             <Blankslate.Heading as="h2">
-                There is no content yet that match {filterBy}.
+                Try a different search term, or clear filters.
             </Blankslate.Heading>
         </Blankslate>
     );
