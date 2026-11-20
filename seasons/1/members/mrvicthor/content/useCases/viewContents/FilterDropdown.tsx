@@ -10,7 +10,7 @@ const FilterDropdown = ({ filterBy, handleFilter, filterOptions }: Props) => {
     return (
         <div className="px-4">
             <ActionMenu>
-                <ActionMenu.Button className="w-37.5 capitalize">
+                <ActionMenu.Button size="large" className="my-2 w-37.5">
                     {filterBy === '' ? 'All types' : filterBy}
                 </ActionMenu.Button>
                 <ActionMenu.Overlay width="small">

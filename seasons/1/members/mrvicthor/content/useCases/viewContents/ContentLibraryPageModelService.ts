@@ -26,6 +26,7 @@ function getFilterOptions(items: Content[]): string[] {
 export function createContentLibraryPageModel(
     items: Content[],
     filterBy: string,
+    search: string,
 ): ContentLibraryPageModel {
     const pageTitle = 'Content Library';
     const filterOptions = getFilterOptions(items);
@@ -40,9 +41,18 @@ export function createContentLibraryPageModel(
             : items.filter(
                   (item) => item.type.toLowerCase() === selectedFilter,
               );
+    const searchResult = search
+        ? visibleItems.filter(
+              (item) =>
+                  item.title
+                      .toLowerCase()
+                      .includes(search.trim().toLowerCase()) ||
+                  item.excerpt.toLowerCase().includes(search.toLowerCase()),
+          )
+        : visibleItems;
     return {
         title: pageTitle,
-        items: sortByNewest(visibleItems).map((item) => ({
+        items: sortByNewest(searchResult).map((item) => ({
             id: item.id,
             title: item.title,
             excerpt: item.excerpt,
