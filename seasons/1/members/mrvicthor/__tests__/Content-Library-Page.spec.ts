@@ -91,4 +91,14 @@ test.describe('Content Library Page', () => {
             cards.filter({ hasText: reactLesson.title }),
         ).toBeVisible();
     });
+
+    test('return a message when no matching content', async ({ mount }) => {
+        const page = await mount('ContentLibraryPage/Default', {
+            props: { items },
+        });
+        await page.getByLabel(/search/i).fill('godzilla');
+        await expect(
+            page.getByText(/try a different search term, or clear filters./i),
+        ).toBeVisible();
+    });
 });
