@@ -1,13 +1,13 @@
-import { FormControl, Heading, Link, TextInput } from '@primer/react';
+import { Heading, Link } from '@primer/react';
 import { ArrowLeftIcon } from '@primer/octicons-react';
 import { ContentLibrary } from './ContentLibrary';
 import { createContentLibraryPageModel } from './ContentLibraryPageModelService';
-import { SearchIcon } from '@primer/octicons-react';
 import FilterDropdown from './FilterDropdown';
 import EmptyCard from './EmptyCard';
 import type { Content } from '../../domain/ContentService';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import { useSearch } from '../../hooks/useSearch';
+import { SearchField } from '../../../src/components/SearchField';
 
 type Props = {
     items: Content[];
@@ -38,23 +38,7 @@ const ContentLibraryPage = ({ items }: Props) => {
                 <span aria-hidden="true" />
             </header>
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <form role="search" className="flex-1 px-4">
-                    <FormControl>
-                        <FormControl.Label visuallyHidden>
-                            Search
-                        </FormControl.Label>
-                        <TextInput
-                            block
-                            size="large"
-                            type="search"
-                            placeholder="Type to search"
-                            leadingVisual={SearchIcon}
-                            value={search}
-                            onChange={(e) => handleSearch(e)}
-                            className=""
-                        />
-                    </FormControl>
-                </form>
+                <SearchField search={search} handleSearch={handleSearch} />
                 <FilterDropdown
                     filterBy={filterParam ?? ''}
                     handleFilter={setFilter}
