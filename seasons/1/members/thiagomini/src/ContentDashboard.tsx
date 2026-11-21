@@ -6,7 +6,9 @@ import {
     Link,
     Select,
     Text,
+    TextInput,
 } from '@primer/react';
+import { parseAsString, useQueryState } from 'nuqs';
 import {
     createContentDashboardViewModel,
     type ContentItem,
@@ -20,13 +22,25 @@ interface ContentDashboardProps {
 
 export function ContentDashboard({ items, locale }: ContentDashboardProps) {
     const { selectedType, setSelectedType } = useSelectedContentType();
+    const [searchQuery, setSearchQuery] = useQueryState(
+        'search',
+        parseAsString,
+    );
     const viewModel = createContentDashboardViewModel(items, {
         locale,
         selectedType,
+        searchQuery,
     });
 
     return (
         <div className="flex flex-col gap-6">
+            <FormControl>
+                <FormControl.Label>Search content by title</FormControl.Label>
+                <TextInput
+                    value={searchQuery ?? ''}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                />
+            </FormControl>
             <FormControl>
                 <FormControl.Label>Filter content by type</FormControl.Label>
                 <Select
@@ -43,6 +57,18 @@ export function ContentDashboard({ items, locale }: ContentDashboardProps) {
                     ))}
                 </Select>
             </FormControl>
+
+            {viewModel.items.length === 0 && (
+                <div>
+                    <Heading as="h2">No matching content</Heading>
+                    <Text
+                        as="p"
+                        aria-label="Try a different search term, or clear filters"
+                    >
+                        Try a different search term, or clear filters
+                    </Text>
+                </div>
+            )}
 
             <ul className="m-0 flex list-none flex-col gap-4 p-0">
                 {viewModel.items.map((item) => (

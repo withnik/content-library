@@ -92,4 +92,91 @@ describe('createContentDashboardViewModel', () => {
             items: [{ id: 'lesson' }],
         });
     });
+
+    it.only.each([
+        ['  RECORDING  ', ['recording']], // case insensitive
+        ['rec', ['recording']], // substring match
+        ['nonexistent', []],
+        ['', ['recording', 'lesson']],
+        ['   ', ['recording', 'lesson']], // whitespace trimming
+    ])('searches titles with query "%s"', (searchQuery, expectedIds) => {
+        const items = [
+            anItem()
+                .with({ id: 'recording' })
+                .withType('recording')
+                .entitled('A recording')
+                .build(),
+            anItem()
+                .with({ id: 'lesson', excerpt: 'A lesson' })
+                .withType('lesson')
+                .entitled('A lesson')
+                .build(),
+        ];
+
+        const viewModel = createContentDashboardViewModel(items, {
+            locale: 'en-US',
+            searchQuery,
+        });
+
+        expect(viewModel.items.map((item) => item.id)).toStrictEqual(
+            expectedIds,
+        );
+    });
+
+    // search also works by excerpt
+    it.each([
+        ['Office Hours', ['recording']], // case insensitive
+        ['reac', ['lesson']], // substring match
+        ['nonexistent', []],
+        ['', ['recording', 'lesson']],
+        ['   ', ['recording', 'lesson']], // whitespace trimming
+    ])('searches excerpts with query "%s"', (searchQuery, expectedIds) => {
+        const items = [
+            anItem().with({ id: 'recording', excerpt: 'Office Hours' }).build(),
+            anItem()
+                .with({ id: 'lesson', excerpt: 'Use Cases in React' })
+                .build(),
+        ];
+
+        const viewModel = createContentDashboardViewModel(items, {
+            locale: 'en-US',
+            searchQuery,
+        });
+
+        expect(viewModel.items.map((item) => item.id)).toStrictEqual(
+            expectedIds,
+        );
+    });
+
+    it('combines title search with the type filter and keeps all types available', () => {
+        const items = [
+            anItem()
+                .with({ id: 'recording' })
+                .entitled('Testing recording')
+                .withType('recording')
+                .build(),
+            anItem()
+                .with({ id: 'lesson' })
+                .entitled('Testing lesson')
+                .withType('lesson')
+                .build(),
+            anItem()
+                .with({ id: 'other-recording' })
+                .entitled('Other recording')
+                .withType('recording')
+                .build(),
+        ];
+
+        expect(
+            createContentDashboardViewModel(items, {
+                locale: 'en-US',
+                selectedType: 'recording',
+                searchQuery: 'testing',
+            }),
+        ).toMatchObject({
+            selectedType: 'recording',
+            types: ['lesson', 'recording'],
+            items: [{ id: 'recording' }],
+        });
+    });
 });

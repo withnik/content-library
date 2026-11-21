@@ -27,6 +27,7 @@ export interface ContentDashboardViewModel {
 export interface ContentDashboardViewModelOptions {
     locale?: string;
     selectedType?: string | null;
+    searchQuery?: string | null;
 }
 
 export const contentItems: readonly ContentItem[] = content.items;
@@ -44,14 +45,18 @@ export function createContentDashboardViewModel(
         : null;
 
     const typesAsSortedArray = [...types].toSorted();
+    const searchQuery = (options.searchQuery ?? '').trim().toLowerCase();
+
+    const itemsMatchingFilters = (item: ContentItem) =>
+        (selectedType === null || item.type === selectedType) &&
+        (item.title.trim().toLowerCase().includes(searchQuery) ||
+            item.excerpt.trim().toLowerCase().includes(searchQuery));
 
     return {
         selectedType,
         types: typesAsSortedArray,
         items: items
-            .filter(
-                (item) => selectedType === null || item.type === selectedType,
-            )
+            .filter(itemsMatchingFilters)
             .toSorted((firstItem, secondItem) =>
                 secondItem.publishedAt.localeCompare(firstItem.publishedAt),
             )
