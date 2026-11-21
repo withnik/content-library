@@ -19,7 +19,7 @@ interface ContentDashboardProps {
 }
 
 export function ContentDashboard({ items, locale }: ContentDashboardProps) {
-    const { selectedType, setSelectedType } = useSelectedContentType(items);
+    const { selectedType, setSelectedType } = useSelectedContentType();
     const viewModel = createContentDashboardViewModel(items, {
         locale,
         selectedType,

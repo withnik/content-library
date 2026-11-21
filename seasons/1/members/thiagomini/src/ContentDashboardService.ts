@@ -38,7 +38,7 @@ export function createContentDashboardViewModel(
     const dateFormatter = new Intl.DateTimeFormat(options?.locale, {
         dateStyle: 'medium',
     });
-    const types = getTypesFromItems(items);
+    const types = new Set(items.map((item) => item.type));
     const selectedType = types.has(options.selectedType ?? '')
         ? (options.selectedType as string)
         : null;
@@ -62,12 +62,4 @@ export function createContentDashboardViewModel(
                 ),
             })),
     };
-}
-
-function getTypesFromItems(items: readonly ContentItem[]): Set<string> {
-    const types = new Set<string>();
-    for (const item of items) {
-        types.add(item.type);
-    }
-    return types;
 }
