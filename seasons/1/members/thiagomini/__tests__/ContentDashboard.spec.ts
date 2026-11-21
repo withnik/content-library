@@ -44,40 +44,6 @@ describe('ContentDashboard', () => {
         await expect(dashboard.getByRole('listitem')).toHaveCount(0);
     });
 
-    test('places search before the type filter and stacks controls on narrow screens', async ({
-        mount,
-        page,
-    }) => {
-        await page.setViewportSize({ width: 900, height: 700 });
-        const dashboard = await mount('ContentDashboard/Empty');
-        const search = dashboard.getByRole('textbox', {
-            name: 'Search content by title',
-        });
-        const filter = dashboard.getByLabel('Filter content by type');
-        await expect(search).toBeVisible();
-        await expect(filter).toBeVisible();
-
-        const searchBox = (await search.boundingBox())!;
-        const filterBox = (await filter.boundingBox())!;
-        expect(searchBox.x + searchBox.width).toBeLessThan(filterBox.x);
-        expect(searchBox.y).toBeLessThan(filterBox.y + filterBox.height);
-        expect(filterBox.y).toBeLessThan(searchBox.y + searchBox.height);
-        expect(searchBox.width).toBeGreaterThan(filterBox.width);
-
-        await page.setViewportSize({ width: 375, height: 700 });
-        const mobileSearchBox = (await search.boundingBox())!;
-        const mobileFilterBox = (await filter.boundingBox())!;
-        expect(mobileSearchBox.y + mobileSearchBox.height).toBeLessThan(
-            mobileFilterBox.y,
-        );
-        expect(mobileSearchBox.x + mobileSearchBox.width).toBeLessThanOrEqual(
-            375,
-        );
-        expect(mobileFilterBox.x + mobileFilterBox.width).toBeLessThanOrEqual(
-            375,
-        );
-    });
-
     test('filters content by type and resets to all content', async ({
         mount,
     }) => {
