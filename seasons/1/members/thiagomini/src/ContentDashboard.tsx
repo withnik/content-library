@@ -34,29 +34,38 @@ export function ContentDashboard({ items, locale }: ContentDashboardProps) {
 
     return (
         <div className="flex flex-col gap-6">
-            <FormControl>
-                <FormControl.Label>Search content by title</FormControl.Label>
-                <TextInput
-                    value={searchQuery ?? ''}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                />
-            </FormControl>
-            <FormControl>
-                <FormControl.Label>Filter content by type</FormControl.Label>
-                <Select
-                    value={viewModel.selectedType ?? ''}
-                    onChange={(event) =>
-                        setSelectedType(event.target.value || null)
-                    }
-                >
-                    <option value="">All</option>
-                    {viewModel.types.map((type) => (
-                        <option key={type} value={type}>
-                            {type}
-                        </option>
-                    ))}
-                </Select>
-            </FormControl>
+            <div className="flex flex-col gap-4 sm:flex-row">
+                <FormControl className="min-w-0 flex-1">
+                    <FormControl.Label visuallyHidden>
+                        Search content by title
+                    </FormControl.Label>
+                    <TextInput
+                        block
+                        placeholder="Type to search"
+                        value={searchQuery ?? ''}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                    />
+                </FormControl>
+                <FormControl className="sm:w-48 sm:shrink-0">
+                    <FormControl.Label visuallyHidden>
+                        Filter content by type
+                    </FormControl.Label>
+                    <Select
+                        block
+                        value={viewModel.selectedType ?? ''}
+                        onChange={(event) =>
+                            setSelectedType(event.target.value || null)
+                        }
+                    >
+                        <option value="">All</option>
+                        {viewModel.types.map((type) => (
+                            <option key={type} value={type}>
+                                {type}
+                            </option>
+                        ))}
+                    </Select>
+                </FormControl>
+            </div>
 
             {viewModel.items.length === 0 && (
                 <div>
