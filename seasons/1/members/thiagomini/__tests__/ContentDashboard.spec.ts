@@ -86,9 +86,7 @@ describe('ContentDashboard', () => {
         await expect(dashboard.getByRole('listitem')).toHaveCount(2);
     });
 
-    test('restores the selected type from provided storage', async ({
-        mount,
-    }) => {
+    test('restores the selected type from url', async ({ mount }) => {
         // Given content items and stored selected type
         const recording = anItem()
             .entitled('A recording')
@@ -101,8 +99,8 @@ describe('ContentDashboard', () => {
             props: {
                 items: [recording, lesson],
                 locale: 'en-US',
-                storage: { 'content-library.selected-type': 'lesson' },
             },
+            path: '?type=lesson',
         });
 
         // Then the stored type is selected and its content is displayed
