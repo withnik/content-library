@@ -67,7 +67,7 @@ export function ContentDashboard({ items, locale }: ContentDashboardProps) {
                 </FormControl>
             </div>
 
-            {viewModel.items.length === 0 && (
+            {viewModel.isEmpty() && (
                 <div>
                     <Heading as="h2">No matching content</Heading>
                     <Text

@@ -22,6 +22,7 @@ export interface ContentDashboardViewModel {
     selectedType: string | null;
     types: string[];
     items: ContentDashboardItemViewModel[];
+    isEmpty(): boolean;
 }
 
 export interface ContentDashboardViewModelOptions {
@@ -66,5 +67,8 @@ export function createContentDashboardViewModel(
                     new Date(`${publishedAt}T00:00:00`),
                 ),
             })),
+        isEmpty() {
+            return this.items.length === 0;
+        },
     };
 }

@@ -3,6 +3,14 @@ import { anItem } from './ContentItemBuilder';
 import { createContentDashboardViewModel } from '../src/ContentDashboardService';
 
 describe('createContentDashboardViewModel', () => {
+    it('is empty when there is no content', () => {
+        const viewModel = createContentDashboardViewModel([], {
+            locale: 'en-US',
+        });
+
+        expect(viewModel.isEmpty()).toBe(true);
+    });
+
     it('sorts content newest first and formats publication dates', () => {
         const items = [
             anItem().with({ id: 'middle' }).publishedAt('2026-03-15').build(),
@@ -93,7 +101,7 @@ describe('createContentDashboardViewModel', () => {
         });
     });
 
-    it.only.each([
+    it.each([
         ['  RECORDING  ', ['recording']], // case insensitive
         ['rec', ['recording']], // substring match
         ['nonexistent', []],
@@ -121,6 +129,7 @@ describe('createContentDashboardViewModel', () => {
         expect(viewModel.items.map((item) => item.id)).toStrictEqual(
             expectedIds,
         );
+        expect(viewModel.isEmpty()).toBe(expectedIds.length === 0);
     });
 
     // search also works by excerpt
@@ -146,6 +155,30 @@ describe('createContentDashboardViewModel', () => {
         expect(viewModel.items.map((item) => item.id)).toStrictEqual(
             expectedIds,
         );
+        expect(viewModel.isEmpty()).toBe(expectedIds.length === 0);
+    });
+
+    it('is empty when search and type filters have no shared matches', () => {
+        const items = [
+            anItem()
+                .entitled('A recording')
+                .withType('recording')
+                .with({ excerpt: 'Recorded discussion' })
+                .build(),
+            anItem()
+                .entitled('A lesson')
+                .withType('lesson')
+                .with({ excerpt: 'Learning material' })
+                .build(),
+        ];
+
+        const viewModel = createContentDashboardViewModel(items, {
+            locale: 'en-US',
+            selectedType: 'recording',
+            searchQuery: 'lesson',
+        });
+
+        expect(viewModel.isEmpty()).toBe(true);
     });
 
     it('combines title search with the type filter and keeps all types available', () => {
