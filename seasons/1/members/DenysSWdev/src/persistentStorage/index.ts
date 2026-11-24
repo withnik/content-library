@@ -1,5 +1,5 @@
 export type { PersistentStorage } from './PersistentStorage.ts';
-export { createUrlStorage } from './createUrlStorage.ts';
+export * from './persistentStorageAdapters.ts';
 export {
     PersistentStorageContext,
     usePersistentValue,
