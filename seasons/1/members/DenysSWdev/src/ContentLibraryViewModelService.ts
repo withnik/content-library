@@ -38,7 +38,7 @@ const matchesType = (item: ContentItem, { type }: Criteria) =>
 
 const matchesSearch = (item: ContentItem, { search }: Criteria) => {
     if (!search) return true;
-    const query = search.toLowerCase();
+    const query = search.trim().toLowerCase();
     return (
         item.title.toLowerCase().includes(query) ||
         item.excerpt.toLowerCase().includes(query)
