@@ -17,6 +17,7 @@ export function useLibraryContent(items: ContentItem[]): LibraryContent {
     const [searchQuery, search] = usePersistentValue('search');
     const model = createContentLibraryViewModel(items, navigator.language, {
         type: selectedType,
+        search: searchQuery,
     });
 
     return { ...model, selectedType, selectType, searchQuery, search };
