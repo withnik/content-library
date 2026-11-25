@@ -125,4 +125,18 @@ describe('content library ViewModel', () => {
             { value: 'recording', label: 'recording' },
         ]);
     });
+
+    it('returns model filtered by search matching title or excerpt case-insensitively as substring', () => {
+        const items = [
+            buildContentItem({ id: '1', title: 'Practical React patterns' }),
+            buildContentItem({ id: '2', excerpt: 'An action plan for teams.' }),
+            buildContentItem({ id: '3', title: 'Testing basics' }),
+        ];
+        const criteria: Criteria = { search: 'ACT' };
+
+        const model = createContentLibraryViewModel(items, locale, criteria);
+
+        // Assert: "ACT" matches inside the title "Practical" and the excerpt "action"
+        expect(model.items.map((item) => item.id)).toEqual(['1', '2']);
+    });
 });
