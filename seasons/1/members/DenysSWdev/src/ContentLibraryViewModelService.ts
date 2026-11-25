@@ -31,13 +31,24 @@ export type ContentLibraryViewModel = {
     }[];
 };
 
-export type Criteria = { type?: string };
+export type Criteria = { type?: string; search?: string };
 
 const matchesType = (item: ContentItem, { type }: Criteria) =>
     !type || item.type === type;
 
+const matchesSearch = (item: ContentItem, { search }: Criteria) => {
+    if (!search) return true;
+    const query = search.toLowerCase();
+    return (
+        item.title.toLowerCase().includes(query) ||
+        item.excerpt.toLowerCase().includes(query)
+    );
+};
+
 const filterItems = (items: ContentItem[], criteria: Criteria) =>
-    items.filter((item) => matchesType(item, criteria));
+    items.filter(
+        (item) => matchesType(item, criteria) && matchesSearch(item, criteria),
+    );
 
 const sortNewestFirst = (items: ContentItem[]) =>
     [...items].sort((a, b) =>
