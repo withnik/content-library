@@ -1,12 +1,14 @@
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig, normalizePath, type Plugin } from 'vite';
 
 const GALLERY_PATH = '/playwright/gallery/index.html';
-const galleryEntry = fileURLToPath(
-    new URL('./gallery/main.tsx', import.meta.url),
-);
+// normalizePath + leading-slash strip: on Windows fileURLToPath gives
+// `C:\...\main.tsx`, which must become `/@fs/C:/.../main.tsx`.
+const galleryEntry = normalizePath(
+    fileURLToPath(new URL('./gallery/main.tsx', import.meta.url)),
+).replace(/^\//, '');
 
 // Serves the integration-testing gallery from the member's dev server without
 // the member owning any file for it. Dev-only: `vite build` never sees it.
@@ -16,7 +18,7 @@ function playwrightGallery(): Plugin {
   <head><meta charset="UTF-8" /><title>Story gallery</title></head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/@fs${galleryEntry}"></script>
+    <script type="module" src="/@fs/${encodeURI(galleryEntry)}"></script>
   </body>
 </html>`;
 
