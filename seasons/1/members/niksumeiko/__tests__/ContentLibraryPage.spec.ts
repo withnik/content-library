@@ -71,6 +71,9 @@ test('see content library with item linking to their original source', async ({
         name: 'Tactics from the Battle of the Five Kings',
     });
     await expect(searchTargetCardTitle).toBeVisible();
+    await expect(page.page()).toHaveURL(
+        (url) => url.searchParams.get('q') === 'Tactics',
+    );
 
 
 

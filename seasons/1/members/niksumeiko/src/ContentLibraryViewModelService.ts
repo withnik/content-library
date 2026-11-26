@@ -17,7 +17,10 @@ export function createContentLibraryViewModel(
     items: ContentItem[],
     locale: string,
     filterValue?: string | null,
+    searchValue?: string | null,
 ): ContentLibraryViewModel {
+    const searchTerm = searchValue?.trim().toLowerCase() ?? '';
+
     const dateFormatter = new Intl.DateTimeFormat(locale, {
         day: 'numeric',
         month: 'long',
@@ -37,6 +40,12 @@ export function createContentLibraryViewModel(
                       : 0,
             )
             .filter((item) => (filterValue ? item.type === filterValue : true))
+            .filter((item) =>
+                searchTerm
+                    ? item.title.toLowerCase().includes(searchTerm) ||
+                      item.excerpt.toLowerCase().includes(searchTerm)
+                    : true,
+            )
             .map((item) => ({
                 id: item.id,
                 title: item.title,

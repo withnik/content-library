@@ -7,9 +7,15 @@ import {
     PageHeader,
     Stack,
     Text,
+    TextInput,
 } from '@primer/react';
+import { SearchIcon } from '@primer/octicons-react';
+import { useEffect, useState } from 'react';
 import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
+import { useDebouncedCallback } from './useDebouncedCallback.ts';
 import { useQueryParam } from './useQueryParam.ts';
+
+const SEARCH_DEBOUNCE_MS = 1000;
 
 export type ContentItem = {
     id: string;
@@ -29,10 +35,23 @@ export type ContentLibraryPageProps = {
 
 export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
     const [filterValue, setFilterValue] = useQueryParam('type');
+    const [searchValue, setSearchValue] = useQueryParam('q');
+    const [searchInput, setSearchInput] = useState(searchValue ?? '');
+    const commitSearch = useDebouncedCallback(
+        (next: string) => setSearchValue(next.trim() || null),
+        SEARCH_DEBOUNCE_MS,
+    );
+
+    useEffect(() => {
+        const next = searchValue ?? '';
+        setSearchInput((current) => (current.trim() === next ? current : next));
+    }, [searchValue]);
+
     const viewModel = createContentLibraryViewModel(
         items,
         navigator.language,
         filterValue,
+        searchValue,
     );
 
     return (
@@ -42,6 +61,18 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                     <PageHeader.Title>{viewModel.title}</PageHeader.Title>
                 </PageHeader.TitleArea>
             </PageHeader>
+
+            <TextInput
+                type="search"
+                aria-label="Search by title or excerpt"
+                placeholder="Search by title or excerpt"
+                leadingVisual={SearchIcon}
+                value={searchInput}
+                onChange={(event) => {
+                    setSearchInput(event.target.value);
+                    commitSearch(event.target.value);
+                }}
+            />
 
             <ActionMenu>
                 <ActionMenu.Button>{filterValue ?? 'All'}</ActionMenu.Button>
