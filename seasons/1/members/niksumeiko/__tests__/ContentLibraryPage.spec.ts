@@ -61,6 +61,15 @@ test('see content library with item linking to their original source', async ({
     await expect(firstCardTitle).toBeVisible();
 
 
+    const searchBoxForEmptyValues = page.getByLabel('search');
+    await searchBoxForEmptyValues.fill("radnom value");
+
+    const noCards = page.getByRole('listitem');
+    await expect(noCards).toHaveCount(0);
+
+    await expect(page.getByText("No matching content")).toBeVisible();
+
+
     const searchBox = page.getByLabel('search');
     await searchBox.fill("Tactics");
 

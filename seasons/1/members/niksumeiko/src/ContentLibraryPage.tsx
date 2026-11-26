@@ -97,45 +97,54 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                 </ActionMenu.Overlay>
             </ActionMenu>
 
-            <ul role="list" className="m-0 flex list-none flex-col gap-4 p-0">
-                {viewModel.items.map((item) => (
-                    <li
-                        key={item.id}
-                        className="rounded-md border border-gray-300 p-4"
-                    >
-                        <Stack direction="vertical" gap="condensed">
-                            <Stack
-                                direction="horizontal"
-                                justify="space-between"
-                                align="start"
-                            >
-                                <Heading as="h3" variant="small">
-                                    <Link
+            {viewModel.items.length === 0 ? (
+                <Text as="p" className="text-center text-gray-500">
+                    No matching content
+                </Text>
+            ) : (
+                <ul
+                    role="list"
+                    className="m-0 flex list-none flex-col gap-4 p-0"
+                >
+                    {viewModel.items.map((item) => (
+                        <li
+                            key={item.id}
+                            className="rounded-md border border-gray-300 p-4"
+                        >
+                            <Stack direction="vertical" gap="condensed">
+                                <Stack
+                                    direction="horizontal"
+                                    justify="space-between"
+                                    align="start"
+                                >
+                                    <Heading as="h3" variant="small">
+                                        <Link
+                                            href={item.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {item.title}
+                                        </Link>
+                                    </Heading>
+                                    <Button
+                                        as="a"
+                                        role="button"
                                         href={item.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        {item.title}
-                                    </Link>
-                                </Heading>
-                                <Button
-                                    as="a"
-                                    role="button"
-                                    href={item.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Open
-                                </Button>
+                                        Open
+                                    </Button>
+                                </Stack>
+                                <Text as="p" size="small">
+                                    {item.type} · {item.date}
+                                </Text>
+                                <Text as="p">{item.excerpt}</Text>
                             </Stack>
-                            <Text as="p" size="small">
-                                {item.type} · {item.date}
-                            </Text>
-                            <Text as="p">{item.excerpt}</Text>
-                        </Stack>
-                    </li>
-                ))}
-            </ul>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </main>
     );
 }
