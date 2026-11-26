@@ -60,6 +60,20 @@ test('see content library with item linking to their original source', async ({
     });
     await expect(firstCardTitle).toBeVisible();
 
+
+    const searchBox = page.getByLabel('search');
+    await searchBox.fill("Tactics");
+
+    const searchedCards = page.getByRole('listitem');
+    await expect(searchedCards).toHaveCount(1);
+
+    const searchTargetCardTitle = searchedCards.first().getByRole('heading', {
+        name: 'Tactics from the Battle of the Five Kings',
+    });
+    await expect(searchTargetCardTitle).toBeVisible();
+
+
+
     const [tabFromTitleClick] = await Promise.all([
         context.waitForEvent('page'),
         firstCardTitle.getByRole('link').click(),
