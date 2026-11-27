@@ -60,18 +60,16 @@ test('see content library with item linking to their original source', async ({
     });
     await expect(firstCardTitle).toBeVisible();
 
-
     const searchBoxForEmptyValues = page.getByLabel('search');
-    await searchBoxForEmptyValues.fill("radnom value");
+    await searchBoxForEmptyValues.fill('radnom value');
 
     const noCards = page.getByRole('listitem');
     await expect(noCards).toHaveCount(0);
 
-    await expect(page.getByText("No matching content")).toBeVisible();
-
+    await expect(page.getByText('No matching content')).toBeVisible();
 
     const searchBox = page.getByLabel('search');
-    await searchBox.fill("Tactics");
+    await searchBox.fill('Tactics');
 
     const searchedCards = page.getByRole('listitem');
     await expect(searchedCards).toHaveCount(1);
@@ -83,8 +81,6 @@ test('see content library with item linking to their original source', async ({
     await expect(page.page()).toHaveURL(
         (url) => url.searchParams.get('q') === 'Tactics',
     );
-
-
 
     const [tabFromTitleClick] = await Promise.all([
         context.waitForEvent('page'),

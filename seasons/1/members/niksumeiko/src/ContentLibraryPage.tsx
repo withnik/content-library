@@ -10,7 +10,7 @@ import {
     TextInput,
 } from '@primer/react';
 import { SearchIcon } from '@primer/octicons-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
 import { useDebouncedCallback } from './useDebouncedCallback.ts';
 import { useQueryParam } from './useQueryParam.ts';
@@ -37,15 +37,17 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
     const [filterValue, setFilterValue] = useQueryParam('type');
     const [searchValue, setSearchValue] = useQueryParam('q');
     const [searchInput, setSearchInput] = useState(searchValue ?? '');
+    const [previousSearchValue, setPreviousSearchValue] = useState(searchValue);
     const commitSearch = useDebouncedCallback(
         (next: string) => setSearchValue(next.trim() || null),
         SEARCH_DEBOUNCE_MS,
     );
 
-    useEffect(() => {
+    if (previousSearchValue !== searchValue) {
+        setPreviousSearchValue(searchValue);
         const next = searchValue ?? '';
-        setSearchInput((current) => (current.trim() === next ? current : next));
-    }, [searchValue]);
+        if (searchInput.trim() !== next) setSearchInput(next);
+    }
 
     const viewModel = createContentLibraryViewModel(
         items,
