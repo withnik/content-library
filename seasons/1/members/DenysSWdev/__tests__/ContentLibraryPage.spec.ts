@@ -89,3 +89,57 @@ test('filter content library by type', async ({ mount }) => {
     // Assert: "All types" brings every item back
     await expect(cards).toHaveCount(2);
 });
+
+test('search library content by title and excerpt', async ({ mount }) => {
+    const items = [
+        buildContentItem({
+            id: 'c_0001',
+            title: 'Practical React patterns',
+            publishedAt: '2026-01-10',
+        }),
+        buildContentItem({
+            id: 'c_0002',
+            title: 'Shipping faster',
+            excerpt: 'An action plan for teams.',
+            publishedAt: '2026-03-15',
+        }),
+        buildContentItem({
+            id: 'c_0003',
+            title: 'Testing basics',
+            excerpt: 'Unit tests from scratch.',
+            publishedAt: '2026-02-20',
+        }),
+    ];
+    const page = await mount('ContentLibraryPage/Default', {
+        props: { items, stored: { search: 'act' } },
+    });
+    const searchInput = page.getByRole('searchbox', { name: 'Search content' });
+    const cardTitles = page.getByRole('listitem').getByRole('heading');
+
+    // Assert: the stored query is restored and matches title or excerpt, newest first
+    await expect(searchInput).toHaveValue('act');
+    await expect(cardTitles).toHaveText([
+        'Shipping faster',
+        'Practical React patterns',
+    ]);
+
+    await searchInput.fill('kubernetes');
+
+    // Assert: nothing matches, so the empty state replaces the list
+    await expect(page.getByRole('listitem')).toHaveCount(0);
+    await expect(
+        page.getByRole('heading', { name: 'No matching content' }),
+    ).toBeVisible();
+    await expect(
+        page.getByText('Try a different search term, or clear filters.'),
+    ).toBeVisible();
+
+    await searchInput.clear();
+
+    // Assert: clearing the query brings every item back, newest first
+    await expect(cardTitles).toHaveText([
+        'Shipping faster',
+        'Testing basics',
+        'Practical React patterns',
+    ]);
+});

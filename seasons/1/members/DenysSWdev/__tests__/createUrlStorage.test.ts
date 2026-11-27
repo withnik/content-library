@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createUrlStorage } from '../src/persistentStorage/createUrlStorage.ts';
+import { createUrlStorage } from '../src/persistentStorage/persistentStorageAdapters.ts';
 
 const currentUrl = () => location.href.replace(location.origin, '');
 

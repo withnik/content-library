@@ -1,6 +1,6 @@
 # Cohort rules
 
-IMPORTANT: These rules are strict. Hooks in `.claude/` enforce them; don't work around a block, report it.
+IMPORTANT: These rules are strict.
 
 1. **Stay in your folder.** Only create or change files under `seasons/1/members/DenysSWdev/`. Reading other files is fine.
 2. **Don't edit `seasons/1/data/content.json`.** It is shared data for all members.
