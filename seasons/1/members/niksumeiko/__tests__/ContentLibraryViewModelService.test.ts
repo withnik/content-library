@@ -139,7 +139,7 @@ describe('content library ViewModel', () => {
         ]);
     });
 
-    it('returns model with items whose title matches the search value', () => {
+    it('returns items whose title or excerpt matches the search value', () => {
         const items = [
             {
                 id: '1',
@@ -149,7 +149,7 @@ describe('content library ViewModel', () => {
                 durationSeconds: null,
                 url: 'https://xy.z/1',
                 publishedAt: '2026-05-19',
-                excerpt: 'Description 1',
+                excerpt: 'Explores the principles of leadership.',
                 thumbnailUrl: null,
             },
             {
@@ -166,14 +166,14 @@ describe('content library ViewModel', () => {
         ] as const satisfies ContentItem[];
         const locale = 'en-US';
 
-        const model = createContentLibraryViewModel(
+        const titleMatches = createContentLibraryViewModel(
             items,
             locale,
             null,
             '  tACTics ',
         );
 
-        expect(model.items).toEqual([
+        expect(titleMatches.items).toEqual([
             {
                 id: '2',
                 title: 'Tactics from the Battle of the Five Kings',
@@ -183,42 +183,14 @@ describe('content library ViewModel', () => {
                 excerpt: 'Description 2',
             },
         ]);
-    });
-
-    it('returns model with items whose excerpt matches the search value', () => {
-        const items = [
-            {
-                id: '1',
-                title: 'Leadership in Westeros',
-                type: 'lesson',
-                media: 'article',
-                durationSeconds: null,
-                url: 'https://xy.z/1',
-                publishedAt: '2026-05-19',
-                excerpt: 'Explores the principles of leadership.',
-                thumbnailUrl: null,
-            },
-            {
-                id: '2',
-                title: 'Battle of the Five Kings',
-                type: 'masterclass',
-                media: 'video',
-                durationSeconds: 1946,
-                url: 'https://xy.z/2',
-                publishedAt: '2026-09-29',
-                excerpt: 'Learn military strategy and tactics.',
-                thumbnailUrl: null,
-            },
-        ] as const satisfies ContentItem[];
-
-        const model = createContentLibraryViewModel(
+        const excerptMatches = createContentLibraryViewModel(
             items,
-            'en-US',
+            locale,
             null,
-            'STRATEGY',
+            'PRINCIPLES',
         );
 
-        expect(model.items.map((item) => item.id)).toEqual(['2']);
+        expect(excerptMatches.items.map((item) => item.id)).toEqual(['1']);
     });
 
     it('combines the type filter with the search value', () => {

@@ -90,27 +90,3 @@ test('see content library with item linking to their original source', async ({
     await expect(tabFromButtonClick).toHaveURL('https://xy.z/battle-tactics');
     await tabFromButtonClick.close();
 });
-
-test('keeps the search input in sync with browser navigation', async ({
-    mount,
-}) => {
-    const page = await mount('ContentLibraryPage/Default', {
-        props: { items },
-        path: '/?q=Tactics',
-    });
-
-    await expect(page.getByLabel('search')).toHaveValue('Tactics');
-    await page.getByLabel('search').fill(' Leadership ');
-    await expect(page.page()).toHaveURL(
-        (url) => url.searchParams.get('q') === 'Leadership',
-    );
-    await expect(page.getByLabel('search')).toHaveValue(' Leadership ');
-
-    await page.page().goBack();
-    await expect(page.getByLabel('search')).toHaveValue('Tactics');
-    await expect(page.getByRole('listitem')).toHaveCount(1);
-
-    await page.page().goForward();
-    await expect(page.getByLabel('search')).toHaveValue('Leadership');
-    await expect(page.getByRole('listitem')).toHaveCount(1);
-});

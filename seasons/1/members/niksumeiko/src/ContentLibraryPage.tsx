@@ -10,7 +10,7 @@ import {
     TextInput,
 } from '@primer/react';
 import { SearchIcon } from '@primer/octicons-react';
-import { useEffect, useState, type ChangeEvent } from 'react';
+import { useEffect, useEffectEvent, useState, type ChangeEvent } from 'react';
 import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
 import { useDebouncedCallback } from './useDebouncedCallback.ts';
 import { useQueryParam } from './useQueryParam.ts';
@@ -42,12 +42,17 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
         SEARCH_DEBOUNCE_MS,
     );
 
-    useEffect(() => {
-        const next = searchValue ?? '';
-        // Synchronize external navigation while preserving the user's spacing.
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+    const syncSearchInput = useEffectEvent(() => {
+        const next = new URLSearchParams(location.search).get('q') ?? '';
         setSearchInput((current) => (current.trim() === next ? current : next));
-    }, [searchValue]);
+    });
+
+    useEffect(() => {
+        const onNavigation = () => syncSearchInput();
+        navigation.addEventListener('currententrychange', onNavigation);
+        return () =>
+            navigation.removeEventListener('currententrychange', onNavigation);
+    }, []);
 
     function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
         setSearchInput(event.target.value);
