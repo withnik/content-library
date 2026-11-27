@@ -86,9 +86,7 @@ describe('ContentDashboard', () => {
         await expect(dashboard.getByRole('listitem')).toHaveCount(2);
     });
 
-    test('restores the selected type from provided storage', async ({
-        mount,
-    }) => {
+    test('restores the selected type from url', async ({ mount }) => {
         // Given content items and stored selected type
         const recording = anItem()
             .entitled('A recording')
@@ -101,8 +99,8 @@ describe('ContentDashboard', () => {
             props: {
                 items: [recording, lesson],
                 locale: 'en-US',
-                storage: { 'content-library.selected-type': 'lesson' },
             },
+            path: '?type=lesson',
         });
 
         // Then the stored type is selected and its content is displayed
@@ -113,5 +111,90 @@ describe('ContentDashboard', () => {
         await expect(dashboard.getByRole('listitem')).toContainText(
             lesson.title,
         );
+    });
+
+    test.describe('Search', () => {
+        test('searches content by title', async ({ mount }) => {
+            // Given content items with different titles
+            const recording = anItem()
+                .entitled('A recording')
+                .withType('recording')
+                .build();
+            const lesson = anItem()
+                .entitled('A lesson')
+                .withType('lesson')
+                .build();
+
+            // When the dashboard is rendered
+            const dashboard = await mount('ContentDashboard/Default', {
+                props: {
+                    items: [recording, lesson],
+                    locale: 'en-US',
+                },
+            });
+            const search = dashboard.getByRole('textbox', {
+                name: 'Search content by title',
+            });
+
+            // When a search query is entered
+            await search.fill('recording');
+
+            // Then only matching content items are displayed
+            await expect(dashboard.getByRole('listitem')).toHaveCount(1);
+            await expect(dashboard.getByRole('listitem')).toContainText(
+                recording.title,
+            );
+
+            // And when the search query does not match any content
+            await search.fill('nonexistent');
+
+            // Then no content items are displayed
+            await expect(dashboard.getByRole('listitem')).toHaveCount(0);
+            await expect(
+                dashboard.getByRole('heading', { name: 'No matching content' }),
+            ).toBeVisible();
+            await expect(
+                dashboard.getByLabel(
+                    'Try a different search term, or clear filters',
+                ),
+            ).toBeVisible();
+
+            // And when the search query is cleared
+            await search.fill('');
+
+            // Then all content items are displayed again
+            await expect(dashboard.getByRole('listitem')).toHaveCount(2);
+        });
+
+        test('restores search query from URL', async ({ mount }) => {
+            // Given content items with different titles
+            const recording = anItem()
+                .entitled('A recording')
+                .withType('recording')
+                .build();
+            const lesson = anItem()
+                .entitled('A lesson')
+                .withType('lesson')
+                .build();
+
+            // When the dashboard is rendered with a search query in the URL
+            const dashboard = await mount('ContentDashboard/Default', {
+                props: {
+                    items: [recording, lesson],
+                    locale: 'en-US',
+                },
+                path: '?search=recording',
+            });
+
+            // Then the search query is restored and matching content is displayed
+            const search = dashboard.getByRole('textbox', {
+                name: 'Search content by title',
+            });
+            await expect(search).toHaveValue('recording');
+            await expect(dashboard.getByRole('listitem')).toHaveCount(1);
+            await expect(dashboard.getByRole('listitem')).toContainText(
+                recording.title,
+            );
+        });
     });
 });

@@ -6,7 +6,9 @@ import {
     Link,
     Select,
     Text,
+    TextInput,
 } from '@primer/react';
+import { parseAsString, useQueryState } from 'nuqs';
 import {
     createContentDashboardViewModel,
     type ContentItem,
@@ -19,30 +21,63 @@ interface ContentDashboardProps {
 }
 
 export function ContentDashboard({ items, locale }: ContentDashboardProps) {
-    const { selectedType, setSelectedType } = useSelectedContentType(items);
+    const { selectedType, setSelectedType } = useSelectedContentType();
+    const [searchQuery, setSearchQuery] = useQueryState(
+        'search',
+        parseAsString,
+    );
     const viewModel = createContentDashboardViewModel(items, {
         locale,
         selectedType,
+        searchQuery,
     });
 
     return (
         <div className="flex flex-col gap-6">
-            <FormControl>
-                <FormControl.Label>Filter content by type</FormControl.Label>
-                <Select
-                    value={viewModel.selectedType ?? ''}
-                    onChange={(event) =>
-                        setSelectedType(event.target.value || null)
-                    }
-                >
-                    <option value="">All</option>
-                    {viewModel.types.map((type) => (
-                        <option key={type} value={type}>
-                            {type}
-                        </option>
-                    ))}
-                </Select>
-            </FormControl>
+            <div className="flex flex-col gap-4 sm:flex-row">
+                <FormControl className="min-w-0 flex-1">
+                    <FormControl.Label visuallyHidden>
+                        Search content by title
+                    </FormControl.Label>
+                    <TextInput
+                        block
+                        placeholder="Type to search"
+                        value={searchQuery ?? ''}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                    />
+                </FormControl>
+                <FormControl className="sm:w-48 sm:shrink-0">
+                    <FormControl.Label visuallyHidden>
+                        Filter content by type
+                    </FormControl.Label>
+                    <Select
+                        block
+                        value={viewModel.selectedType ?? ''}
+                        onChange={(event) =>
+                            setSelectedType(event.target.value || null)
+                        }
+                    >
+                        <option value="">All</option>
+                        {viewModel.types.map((type) => (
+                            <option key={type} value={type}>
+                                {type}
+                            </option>
+                        ))}
+                    </Select>
+                </FormControl>
+            </div>
+
+            {viewModel.isEmpty() && (
+                <div>
+                    <Heading as="h2">No matching content</Heading>
+                    <Text
+                        as="p"
+                        aria-label="Try a different search term, or clear filters"
+                    >
+                        Try a different search term, or clear filters
+                    </Text>
+                </div>
+            )}
 
             <ul className="m-0 flex list-none flex-col gap-4 p-0">
                 {viewModel.items.map((item) => (

@@ -1,6 +1,6 @@
 import { ContentDashboard } from '../src/ContentDashboard';
 import type { ContentItem } from '../src/ContentDashboardService';
-import { KeyValueStorageContext } from '../src/KeyValueStorage';
+import { NuqsAdapter } from 'nuqs/adapters/react';
 
 const singleItem = [
     {
@@ -16,31 +16,27 @@ const singleItem = [
 ] satisfies readonly ContentItem[];
 
 export const WithSingleItem = () => (
-    <ContentDashboard items={singleItem} locale="en-US" />
+    <NuqsAdapter>
+        <ContentDashboard items={singleItem} locale="en-US" />
+    </NuqsAdapter>
 );
 
 export const Default = ({
     items,
     locale,
-    storage,
 }: {
     items: readonly ContentItem[];
     locale: string;
-    storage?: Record<string, string>;
 }) => {
-    const dashboard = <ContentDashboard items={items} locale={locale} />;
-
-    return storage ? (
-        <KeyValueStorageContext.Provider
-            value={new Map(Object.entries(storage))}
-        >
-            {dashboard}
-        </KeyValueStorageContext.Provider>
-    ) : (
-        dashboard
+    return (
+        <NuqsAdapter>
+            <ContentDashboard items={items} locale={locale} />
+        </NuqsAdapter>
     );
 };
 
 export const Empty = () => (
-    <ContentDashboard items={[]} locale={navigator.language} />
+    <NuqsAdapter>
+        <ContentDashboard items={[]} locale={navigator.language} />
+    </NuqsAdapter>
 );

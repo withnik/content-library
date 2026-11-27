@@ -22,11 +22,13 @@ export interface ContentDashboardViewModel {
     selectedType: string | null;
     types: string[];
     items: ContentDashboardItemViewModel[];
+    isEmpty(): boolean;
 }
 
 export interface ContentDashboardViewModelOptions {
     locale?: string;
     selectedType?: string | null;
+    searchQuery?: string | null;
 }
 
 export const contentItems: readonly ContentItem[] = content.items;
@@ -38,20 +40,24 @@ export function createContentDashboardViewModel(
     const dateFormatter = new Intl.DateTimeFormat(options?.locale, {
         dateStyle: 'medium',
     });
-    const types = getTypesFromItems(items);
+    const types = new Set(items.map((item) => item.type));
     const selectedType = types.has(options.selectedType ?? '')
         ? (options.selectedType as string)
         : null;
 
     const typesAsSortedArray = [...types].toSorted();
+    const searchQuery = (options.searchQuery ?? '').trim().toLowerCase();
+
+    const itemsMatchingFilters = (item: ContentItem) =>
+        (selectedType === null || item.type === selectedType) &&
+        (item.title.trim().toLowerCase().includes(searchQuery) ||
+            item.excerpt.trim().toLowerCase().includes(searchQuery));
 
     return {
         selectedType,
         types: typesAsSortedArray,
         items: items
-            .filter(
-                (item) => selectedType === null || item.type === selectedType,
-            )
+            .filter(itemsMatchingFilters)
             .toSorted((firstItem, secondItem) =>
                 secondItem.publishedAt.localeCompare(firstItem.publishedAt),
             )
@@ -61,13 +67,8 @@ export function createContentDashboardViewModel(
                     new Date(`${publishedAt}T00:00:00`),
                 ),
             })),
+        isEmpty() {
+            return this.items.length === 0;
+        },
     };
-}
-
-function getTypesFromItems(items: readonly ContentItem[]): Set<string> {
-    const types = new Set<string>();
-    for (const item of items) {
-        types.add(item.type);
-    }
-    return types;
 }
