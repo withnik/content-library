@@ -185,42 +185,6 @@ describe('content library ViewModel', () => {
         ]);
     });
 
-    it('combines the type filter with the search value', () => {
-        const items = [
-            {
-                id: '1',
-                title: 'Tactics for leaders',
-                type: 'lesson',
-                media: 'article',
-                durationSeconds: null,
-                url: 'https://xy.z/1',
-                publishedAt: '2026-05-19',
-                excerpt: 'Description 1',
-                thumbnailUrl: null,
-            },
-            {
-                id: '2',
-                title: 'Tactics from the Battle of the Five Kings',
-                type: 'masterclass',
-                media: 'video',
-                durationSeconds: 1946,
-                url: 'https://xy.z/2',
-                publishedAt: '2026-09-29',
-                excerpt: 'Description 2',
-                thumbnailUrl: null,
-            },
-        ] as const satisfies ContentItem[];
-
-        const model = createContentLibraryViewModel(
-            items,
-            'en-US',
-            'lesson',
-            'tactics',
-        );
-
-        expect(model.items.map((item) => item.id)).toEqual(['1']);
-    });
-
     it('returns model with items whose excerpt matches the search value', () => {
         const items = [
             {
@@ -255,5 +219,41 @@ describe('content library ViewModel', () => {
         );
 
         expect(model.items.map((item) => item.id)).toEqual(['2']);
+    });
+
+    it('combines the type filter with the search value', () => {
+        const items = [
+            {
+                id: '1',
+                title: 'Tactics for leaders',
+                type: 'lesson',
+                media: 'article',
+                durationSeconds: null,
+                url: 'https://xy.z/1',
+                publishedAt: '2026-05-19',
+                excerpt: 'Description 1',
+                thumbnailUrl: null,
+            },
+            {
+                id: '2',
+                title: 'Tactics from the Battle of the Five Kings',
+                type: 'masterclass',
+                media: 'video',
+                durationSeconds: 1946,
+                url: 'https://xy.z/2',
+                publishedAt: '2026-09-29',
+                excerpt: 'Description 2',
+                thumbnailUrl: null,
+            },
+        ] as const satisfies ContentItem[];
+
+        const model = createContentLibraryViewModel(
+            items,
+            'en-US',
+            'lesson',
+            'tactics',
+        );
+
+        expect(model.items.map((item) => item.id)).toEqual(['1']);
     });
 });

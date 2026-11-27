@@ -60,24 +60,17 @@ test('see content library with item linking to their original source', async ({
     });
     await expect(firstCardTitle).toBeVisible();
 
-    const searchBoxForEmptyValues = page.getByLabel('search');
-    await searchBoxForEmptyValues.fill('radnom value');
-
-    const noCards = page.getByRole('listitem');
-    await expect(noCards).toHaveCount(0);
-
+    await page.getByLabel('search').fill('radnom value');
+    await expect(page.getByRole('listitem')).toHaveCount(0);
     await expect(page.getByText('No matching content')).toBeVisible();
 
-    const searchBox = page.getByLabel('search');
-    await searchBox.fill('Tactics');
-
-    const searchedCards = page.getByRole('listitem');
-    await expect(searchedCards).toHaveCount(1);
-
-    const searchTargetCardTitle = searchedCards.first().getByRole('heading', {
-        name: 'Tactics from the Battle of the Five Kings',
-    });
-    await expect(searchTargetCardTitle).toBeVisible();
+    await page.getByLabel('search').fill('Tactics');
+    await expect(page.getByRole('listitem')).toHaveCount(1);
+    await expect(
+        page.getByRole('listitem').first().getByRole('heading', {
+            name: 'Tactics from the Battle of the Five Kings',
+        }),
+    ).toBeVisible();
     await expect(page.page()).toHaveURL(
         (url) => url.searchParams.get('q') === 'Tactics',
     );
@@ -96,4 +89,28 @@ test('see content library with item linking to their original source', async ({
     ]);
     await expect(tabFromButtonClick).toHaveURL('https://xy.z/battle-tactics');
     await tabFromButtonClick.close();
+});
+
+test('keeps the search input in sync with browser navigation', async ({
+    mount,
+}) => {
+    const page = await mount('ContentLibraryPage/Default', {
+        props: { items },
+        path: '/?q=Tactics',
+    });
+
+    await expect(page.getByLabel('search')).toHaveValue('Tactics');
+    await page.getByLabel('search').fill(' Leadership ');
+    await expect(page.page()).toHaveURL(
+        (url) => url.searchParams.get('q') === 'Leadership',
+    );
+    await expect(page.getByLabel('search')).toHaveValue(' Leadership ');
+
+    await page.page().goBack();
+    await expect(page.getByLabel('search')).toHaveValue('Tactics');
+    await expect(page.getByRole('listitem')).toHaveCount(1);
+
+    await page.page().goForward();
+    await expect(page.getByLabel('search')).toHaveValue('Leadership');
+    await expect(page.getByRole('listitem')).toHaveCount(1);
 });

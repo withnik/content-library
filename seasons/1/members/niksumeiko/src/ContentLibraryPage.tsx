@@ -10,7 +10,7 @@ import {
     TextInput,
 } from '@primer/react';
 import { SearchIcon } from '@primer/octicons-react';
-import { useState } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
 import { useDebouncedCallback } from './useDebouncedCallback.ts';
 import { useQueryParam } from './useQueryParam.ts';
@@ -37,16 +37,21 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
     const [filterValue, setFilterValue] = useQueryParam('type');
     const [searchValue, setSearchValue] = useQueryParam('q');
     const [searchInput, setSearchInput] = useState(searchValue ?? '');
-    const [previousSearchValue, setPreviousSearchValue] = useState(searchValue);
     const commitSearch = useDebouncedCallback(
         (next: string) => setSearchValue(next.trim() || null),
         SEARCH_DEBOUNCE_MS,
     );
 
-    if (previousSearchValue !== searchValue) {
-        setPreviousSearchValue(searchValue);
+    useEffect(() => {
         const next = searchValue ?? '';
-        if (searchInput.trim() !== next) setSearchInput(next);
+        // Synchronize external navigation while preserving the user's spacing.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSearchInput((current) => (current.trim() === next ? current : next));
+    }, [searchValue]);
+
+    function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
+        setSearchInput(event.target.value);
+        commitSearch(event.target.value);
     }
 
     const viewModel = createContentLibraryViewModel(
@@ -70,10 +75,7 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                 placeholder="Search by title or excerpt"
                 leadingVisual={SearchIcon}
                 value={searchInput}
-                onChange={(event) => {
-                    setSearchInput(event.target.value);
-                    commitSearch(event.target.value);
-                }}
+                onChange={handleSearchChange}
             />
 
             <ActionMenu>
