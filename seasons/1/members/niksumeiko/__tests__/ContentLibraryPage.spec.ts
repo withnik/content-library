@@ -60,6 +60,21 @@ test('see content library with item linking to their original source', async ({
     });
     await expect(firstCardTitle).toBeVisible();
 
+    await page.getByLabel('search').fill('radnom value');
+    await expect(page.getByRole('listitem')).toHaveCount(0);
+    await expect(page.getByText('No matching content')).toBeVisible();
+
+    await page.getByLabel('search').fill('Tactics');
+    await expect(page.getByRole('listitem')).toHaveCount(1);
+    await expect(
+        page.getByRole('listitem').first().getByRole('heading', {
+            name: 'Tactics from the Battle of the Five Kings',
+        }),
+    ).toBeVisible();
+    await expect(page.page()).toHaveURL(
+        (url) => url.searchParams.get('q') === 'Tactics',
+    );
+
     const [tabFromTitleClick] = await Promise.all([
         context.waitForEvent('page'),
         firstCardTitle.getByRole('link').click(),

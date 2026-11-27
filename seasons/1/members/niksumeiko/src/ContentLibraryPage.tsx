@@ -7,9 +7,15 @@ import {
     PageHeader,
     Stack,
     Text,
+    TextInput,
 } from '@primer/react';
+import { SearchIcon } from '@primer/octicons-react';
+import { useEffect, useEffectEvent, useState, type ChangeEvent } from 'react';
 import { createContentLibraryViewModel } from './ContentLibraryViewModelService.ts';
+import { useDebouncedCallback } from './useDebouncedCallback.ts';
 import { useQueryParam } from './useQueryParam.ts';
+
+const SEARCH_DEBOUNCE_MS = 1000;
 
 export type ContentItem = {
     id: string;
@@ -29,10 +35,35 @@ export type ContentLibraryPageProps = {
 
 export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
     const [filterValue, setFilterValue] = useQueryParam('type');
+    const [searchValue, setSearchValue] = useQueryParam('q');
+    const [searchInput, setSearchInput] = useState(searchValue ?? '');
+    const commitSearch = useDebouncedCallback(
+        (next: string) => setSearchValue(next.trim() || null),
+        SEARCH_DEBOUNCE_MS,
+    );
+
+    const syncSearchInput = useEffectEvent(() => {
+        const next = new URLSearchParams(location.search).get('q') ?? '';
+        setSearchInput((current) => (current.trim() === next ? current : next));
+    });
+
+    useEffect(() => {
+        const onNavigation = () => syncSearchInput();
+        navigation.addEventListener('currententrychange', onNavigation);
+        return () =>
+            navigation.removeEventListener('currententrychange', onNavigation);
+    }, []);
+
+    function handleSearchChange(event: ChangeEvent<HTMLInputElement>) {
+        setSearchInput(event.target.value);
+        commitSearch(event.target.value);
+    }
+
     const viewModel = createContentLibraryViewModel(
         items,
         navigator.language,
         filterValue,
+        searchValue,
     );
 
     return (
@@ -42,6 +73,15 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                     <PageHeader.Title>{viewModel.title}</PageHeader.Title>
                 </PageHeader.TitleArea>
             </PageHeader>
+
+            <TextInput
+                type="search"
+                aria-label="Search by title or excerpt"
+                placeholder="Search by title or excerpt"
+                leadingVisual={SearchIcon}
+                value={searchInput}
+                onChange={handleSearchChange}
+            />
 
             <ActionMenu>
                 <ActionMenu.Button>{filterValue ?? 'All'}</ActionMenu.Button>
@@ -66,45 +106,54 @@ export function ContentLibraryPage({ items }: ContentLibraryPageProps) {
                 </ActionMenu.Overlay>
             </ActionMenu>
 
-            <ul role="list" className="m-0 flex list-none flex-col gap-4 p-0">
-                {viewModel.items.map((item) => (
-                    <li
-                        key={item.id}
-                        className="rounded-md border border-gray-300 p-4"
-                    >
-                        <Stack direction="vertical" gap="condensed">
-                            <Stack
-                                direction="horizontal"
-                                justify="space-between"
-                                align="start"
-                            >
-                                <Heading as="h3" variant="small">
-                                    <Link
+            {viewModel.items.length === 0 ? (
+                <Text as="p" className="text-center text-gray-500">
+                    No matching content
+                </Text>
+            ) : (
+                <ul
+                    role="list"
+                    className="m-0 flex list-none flex-col gap-4 p-0"
+                >
+                    {viewModel.items.map((item) => (
+                        <li
+                            key={item.id}
+                            className="rounded-md border border-gray-300 p-4"
+                        >
+                            <Stack direction="vertical" gap="condensed">
+                                <Stack
+                                    direction="horizontal"
+                                    justify="space-between"
+                                    align="start"
+                                >
+                                    <Heading as="h3" variant="small">
+                                        <Link
+                                            href={item.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {item.title}
+                                        </Link>
+                                    </Heading>
+                                    <Button
+                                        as="a"
+                                        role="button"
                                         href={item.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
-                                        {item.title}
-                                    </Link>
-                                </Heading>
-                                <Button
-                                    as="a"
-                                    role="button"
-                                    href={item.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Open
-                                </Button>
+                                        Open
+                                    </Button>
+                                </Stack>
+                                <Text as="p" size="small">
+                                    {item.type} · {item.date}
+                                </Text>
+                                <Text as="p">{item.excerpt}</Text>
                             </Stack>
-                            <Text as="p" size="small">
-                                {item.type} · {item.date}
-                            </Text>
-                            <Text as="p">{item.excerpt}</Text>
-                        </Stack>
-                    </li>
-                ))}
-            </ul>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </main>
     );
 }
